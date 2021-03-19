@@ -44,7 +44,7 @@ const CRUDForm = ({ inputs, setInputs, inputsSkeleton, handleSubmit, cancelEdit,
     <div className="card">
       <form onSubmit={handleSubmit}>
         <div className="card-header">
-          <h3 className="card-title">{action === "ADDING" ? "Ajouter un nouveau doctorant" : action === "EDITING" ? "Modifier un doctorant" : ""}</h3>
+          <h3 className="card-title">{action === "ADDING" ? "Ajouter un nouveau laboratoire" : action === "EDITING" ? "Modifier un laboratoire" : ""}</h3>
         </div>
 
         <div className={`card-body form `}>

@@ -25,7 +25,7 @@ const Laboratories = () => {
   const [inputs, setInputs] = useState({});
   const [action, setAction] = useState("ADDING");
 
-  const columns = ["Nom", "Abréviation", "Établissement"];
+  const columns = ["Nom", "Abréviation"];
 
   const inputsSkeleton = [
     { name: "name", label: columns[0], type: "input" },
@@ -36,6 +36,11 @@ const Laboratories = () => {
       type: "select",
       options: establishments,
     },
+  ];
+  const inputsSkeleton2 = [
+    { name: "name", label: columns[0], type: "input" },
+    { name: "abbreviation", label: columns[1], type: "input" },
+  
   ];
 
   const clearInputs = () => {
@@ -163,7 +168,7 @@ const Laboratories = () => {
           <CRUDTable
             columns={columns}
             data={laboratories}
-            tableSkeleton={inputsSkeleton}
+            tableSkeleton={inputsSkeleton2}
             actions={[
               { name: "Gérer", function: manageLaboratory, style: "primary" },
               { name: "Modifier", function: editLaboratory, style: "primary" },

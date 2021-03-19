@@ -23,17 +23,12 @@ import React, {
     const [establishments, setEstablishments] = useState([]);
   
   
-    const columns = ["Nom", "Abréviation", "Établissement"];
+    const columns = ["Nom", "Abréviation"];
   
     const inputsSkeleton = [
       { name: "name", label: columns[0], type: "input" },
       { name: "abbreviation", label: columns[1], type: "input" },
-      {
-        name: "establishment",
-        label: columns[2],
-        type: "select",
-        options: establishments,
-      },
+      
     ];
   
   

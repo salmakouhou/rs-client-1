@@ -23,7 +23,7 @@ import LaboratoriesOfDirector from "../views/ManagingEntities/DirectorViews/Labo
 import TeamOfDirector from "../views/ManagingEntities/DirectorViews/TeamOfDirector";
 import DirectorTeamsStatistics from "../views/Statistics/DirectorTeamsStatistics";
 import DirectorLabsStatistics from "../views/Statistics/DirectorLabStatistics";
-
+import Archive from '../views/Statistics/Archive'
 
 import {
   HomeIcon,
@@ -64,21 +64,21 @@ const entitiesPathsCategory = {
       title: "Université",
       path: "/university",
       component: University,
-      roles: ["CED_HEAD", "CED_HEAD","VICE_CED_HEAD"],
+      roles: ["CED_HEAD", "CED_HEAD", "VICE_CED_HEAD"],
       inMenu: true,
     },
     {
       title: "Établissements",
       path: "/establishments",
       component: Establishments,
-      roles: ["CED_HEAD", "CED_HEAD","VICE_CED_HEAD"],
+      roles: ["CED_HEAD", "CED_HEAD", "VICE_CED_HEAD"],
       inMenu: true,
     },
     {
       title: "Laboratoires",
       path: "/laboratories",
       component: Laboratories,
-      roles: ["CED_HEAD", "CED_HEAD","VICE_CED_HEAD"],
+      roles: ["CED_HEAD", "CED_HEAD", "VICE_CED_HEAD"],
       inMenu: true,
     },
     {
@@ -106,10 +106,10 @@ const entitiesPathsCategory = {
       title: "Laboratoire",
       path: "/Laboratory/:laboratoryId",
       component: Laboratory,
-      roles: ["CED_HEAD", "CED_HEAD","VICE_CED_HEAD", "RESEARCH_DIRECTOR"],
+      roles: ["CED_HEAD", "CED_HEAD", "VICE_CED_HEAD", "RESEARCH_DIRECTOR"],
       inMenu: false,
     },
-    
+
   ],
 };
 
@@ -145,7 +145,7 @@ const researchDirectorPaths = {
       title: "Equipe",
       path: "/team-of-director/:teamId",
       component: TeamOfDirector,
-      roles: ["RESEARCH_DIRECTOR", "CED_HEAD","VICE_CED_HEAD"]
+      roles: ["RESEARCH_DIRECTOR", "CED_HEAD", "VICE_CED_HEAD"]
     },
 
   ]
@@ -160,7 +160,7 @@ const accountsManagementPathsCategory = {
       title: "Comptes chefs des Laboratoires",
       path: "/laboratory-heads",
       component: LaboratoryHeads,
-      roles: ["CED_HEAD","VICE_CED_HEAD"],
+      roles: ["CED_HEAD", "VICE_CED_HEAD"],
       icon: TeamIcon,
       inMenu: true,
     },
@@ -176,12 +176,12 @@ const accountsManagementPathsCategory = {
       title: "Compte Directeur de recherche",
       path: "/research-director",
       component: ResearchDirector,
-      roles: ["CED_HEAD","VICE_CED_HEAD",],
+      roles: ["CED_HEAD", "VICE_CED_HEAD",],
       icon: TeamIcon,
       inMenu: true,
     },
-    
-    
+
+
   ],
 };
 
@@ -211,50 +211,57 @@ const StatisticsPaths = {
       path: "/labStatistics",
       component: LabStatistics,
       icon: StatisticsIcon,
-      roles: ["CED_HEAD","CED_HEAD","VICE_CED_HEAD",],
+      roles: ["CED_HEAD", "CED_HEAD", "VICE_CED_HEAD",],
       inMenu: true,
     },
-    
+
   ],
 };
 
 const budgetPath = {
-title: "Budget",
+  title: "Budget",
   isDropdown: false,
-  icon : BudgetIcon,
+  icon: BudgetIcon,
   routes: [
     {
 
       title: "Budget",
       path: "/Budget",
       component: LaboratoryBudget,
-     roles: ["LABORATORY_HEAD"],
-  icon: BudgetIcon,
-  inMenu: true,
+      roles: ["LABORATORY_HEAD"],
+      icon: BudgetIcon,
+      inMenu: true,
     },
-    
+
     {
       title: "Budget",
       path: "/Budget-CED",
       component: EstablishmentBudget,
-      roles: ["CED_HEAD","CED_HEAD","VICE_CED_HEAD",],
+      roles: ["CED_HEAD", "CED_HEAD", "VICE_CED_HEAD",],
       icon: TeamIcon,
       inMenu: true,
-     }
+    }
 
   ]
 }
-    
+
 const reportPath = {
   title: "Rapport",
-  isDropdown: false,
+  isDropdown: true,
+  icon: TeamIcon,
   routes: [
     {
       title: "Rapport",
       path: "/Rapport",
       component: Report,
       roles: ["LABORATORY_HEAD"],
-      icon: TeamIcon,
+      inMenu: true,
+    },
+    {
+      title: "Archivage",
+      path: "/archive",
+      component: Archive,
+      roles: ["LABORATORY_HEAD"],
       inMenu: true,
     },
   ],
@@ -300,7 +307,7 @@ const communPathsCategory = {
       inMenu: true,
       roles: allRoles,
     },
-    
+
 
     {
       title: "Profile",
@@ -366,7 +373,7 @@ const menus = [
   budgetPath,
   errorPathsCategory,
   reportPath
-  
+
 ];
 
 const routes = [
@@ -381,7 +388,7 @@ const routes = [
   ...budgetPath.routes,
   ...reportPath.routes,
   ...errorPathsCategory.routes,
-  
+
 ];
 
 export { routes, menus };

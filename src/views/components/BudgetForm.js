@@ -16,29 +16,31 @@ const BudgetForm = ({
 }) => {
   const handleNumberInputsChange = (event) => {
     event.persist();
-    if(  Number.isInteger(parseInt(event.target.value)))
-       {setInputs((inputs) => ({
+    if (Number.isInteger(parseInt(event.target.value))) {
+      setInputs((inputs) => ({
         ...inputs,
         [event.target.name]: parseInt(event.target.value),
-        }));
-      
-        console.log("inputs",inputs);}
+      }));
+
+      console.log("inputs", inputs);
+    }
   };
   const handleInputsChange = (event) => {
     event.persist();
-   
-       setInputs((inputs) => ({
-        ...inputs,
-        [event.target.name]: event.target.value,
-        }));
-      
-        console.log("inputs",inputs);}
-  
+
+    setInputs((inputs) => ({
+      ...inputs,
+      [event.target.name]: event.target.value,
+    }));
+
+    console.log("inputs", inputs);
+  }
+
   useEffect(() => {
     console.log(inputsSkeleton);
-    console.log("inputs",inputs);
+    console.log("inputs", inputs);
     inputsSkeleton.forEach((input) => {
-      console.log("undef",inputs[input.name]);
+      console.log("undef", inputs[input.name]);
       if (
         input.type === "select" &&
         input.options.length &&
@@ -46,9 +48,9 @@ const BudgetForm = ({
       )
         setInputs((inputs) => ({
           ...inputs,
-          [input.name ]: 2015,
+          [input.name]: 2015,
         }));
-       
+
 
     });
   }, [inputs, inputsSkeleton, setInputs]);
@@ -58,12 +60,12 @@ const BudgetForm = ({
       <form onSubmit={handleSubmit}>
         <div className="card-header">
           <h3 className="card-title">
-              {title}          
+            {title}
           </h3>
         </div>
 
         <div className="card-body">
-          {inputsSkeleton.map((input,index) => (
+          {inputsSkeleton.map((input, index) => (
             <Fragment key={index}>
               {input.type === "input" && (
                 <div className="form-group mt-2">
@@ -84,14 +86,14 @@ const BudgetForm = ({
                 <div className="form-group mt-2">
                   <label className="form-label">{input.label}</label>
                   <select
-                    name={input.name }
+                    name={input.name}
                     onChange={handleInputsChange}
-                    value={inputs[input.name ]}
+                    value={inputs[input.name]}
                     className="form-control"
                   >
                     <option>Choisissez une option</option>
                     {input.options.map((option, index) => (
-                      <option value={option}  key={index}>
+                      <option value={option} key={index}>
                         {option}
                       </option>
                     ))}
@@ -102,21 +104,22 @@ const BudgetForm = ({
           ))}
         </div>
         <div className="card-footer text-right">
-         { !willPrint&&
-         <div>
-         <button onClick={cancelEdit} className="mr-2 btn btn-outline-danger">
-            Annuler
+          {!willPrint &&
+            <div>
+              <button onClick={cancelEdit} className="mr-2 btn btn-outline-danger">
+                Annuler
           </button>
-          <button type="submit" className="btn btn-primary">
-            Soumettre
+              <button type="submit" className="btn btn-primary">
+                Soumettre
           </button>
-          </div>}
-          { willPrint&&
-             <Fragment>
-             <PDFDownloadLink className="btn  btn-sm m-1  btn-outline-primary" document={ <ReportTable teamPublications={teamPublications} team={inputs.team} year={inputs.year.toString()}/>} fileName={"Rapport"}>
-               { (loading ? "Chargement du document..." : "Imprimer le rapport")}
+            </div>}
+          {willPrint &&
+            <Fragment>
+              <PDFDownloadLink  className={(loading ?"btn  btn-sm m-1  btn-outline-primary disabled": "btn  btn-sm m-1  btn-outline-primary ")}   document={<ReportTable teamPublications={teamPublications} team={inputs.team} year={inputs.year.toString()} />} fileName={"Rapport"}>
+                  Imprimer le rapport
              </PDFDownloadLink>
-           </Fragment>     }
+            </Fragment>}
+
         </div>
       </form>
     </div>

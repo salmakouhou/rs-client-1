@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { createBrowserHistory } from "history";
 
-import MenuBar from "../../views/layout/MenuBar";
 import NavBar from "../../views/layout/NavBar";
 import ApplicationAlerts from "../../views/components/ApplicationAlerts";
 import Footer from "../../views/layout/Footer";
