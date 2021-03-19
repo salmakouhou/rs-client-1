@@ -11,6 +11,7 @@ import CRUDTable from "../components/CRUDTable";
 import CRUDForm from "../components/CRUDForm";
 import PageHeader from "../components/PageHeader";
 import { useHistory } from "react-router-dom";
+import swal from 'sweetalert';
 
 const Teams = () => {
   const history = useHistory();
@@ -26,7 +27,7 @@ const Teams = () => {
   const [inputs, setInputs] = useState({});
   const [action, setAction] = useState("ADDING");
 
-  const columns = ["Nom", "Abréviation", "laboratoire"];
+  const columns = ["Nom", "Abréviation"];
 
   const inputsSkeleton = [
     { name: "name", label: columns[0], type: "input" },
@@ -35,8 +36,12 @@ const Teams = () => {
       name: "laboratory",
       label: columns[2],
       type: "select",
-      options: laboratories,
+      options: laboratories, 
     },
+  ];
+  const inputsSkeleton2 = [
+    { name: "name", label: columns[0], type: "input" },
+    { name: "abbreviation", label: columns[1], type: "input" },
   ];
 
   const clearInputs = () => {
@@ -63,6 +68,8 @@ const Teams = () => {
             laboratory: team.laboratory.name,
           }));
         setTeams(filteredTeams);
+        
+        
       } else throw Error();
     } catch (error) {
       pushAlert({
@@ -115,21 +122,40 @@ const Teams = () => {
 
   const deleteTeam = async (team) => {
     try {
-      const response = await teamService.deleteTeam(team._id);
-      if (response.data) updateTeamData();
-      else throw Error();
 
-      if (team.head_id === user._id) {
-        pushAlert({
-          type: "success",
-          message:
-            "vous êtes chef de l'équipe que vous venez de supprimer. Vous serez déconnecté pour rétablir vos rôles",
+      swal({
+        title: "Confirmation",
+        text: "Etes vous sur de vouloir supprimer cette équipe ?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+        .then(async (willDelete) => {
+          if (willDelete) {
+            const response = await teamService.deleteTeam(team._id);
+            if (response.data) updateTeamData();
+            else throw Error();
+      
+            if (team.head_id === user._id) {
+              pushAlert({
+                type: "success",
+                message:
+                  "vous êtes chef de l'équipe que vous venez de supprimer. Vous serez déconnecté pour rétablir vos rôles",
+              });
+      
+              setTimeout(() => {
+                history.push("/login");
+              }, 1500);
+            }
+            swal("L'équipe à été supprimer avec succès", {
+              icon: "success",
+            });
+          } else {
+            swal("Abortion du transaction!");
+          }
         });
 
-        setTimeout(() => {
-          history.push("/login");
-        }, 1500);
-      }
+     
     } catch (error) {
       pushAlert({ message: "Incapable de supprimer l'équipe" });
     }
@@ -145,8 +171,8 @@ const Teams = () => {
     return action === "ADDING"
       ? addTeam()
       : action === "EDITING"
-      ? updateTeam()
-      : updateTeamData();
+        ? updateTeam()
+        : updateTeamData();
   };
 
   const cancelEdit = () => {
@@ -160,6 +186,7 @@ const Teams = () => {
     clearInputs();
   }, []);
 
+ 
   return (
     <Fragment>
       <div className="page-header">
@@ -175,7 +202,7 @@ const Teams = () => {
           <CRUDTable
             columns={columns}
             data={teams}
-            tableSkeleton={inputsSkeleton}
+            tableSkeleton={inputsSkeleton2}
             actions={[
               { name: "Gérer", function: manageTeam, style: "primary" },
               { name: "Modifier", function: editTeam, style: "primary" },
