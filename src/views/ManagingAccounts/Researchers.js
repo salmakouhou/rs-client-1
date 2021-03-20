@@ -129,7 +129,7 @@ const Researchers = () => {
         <div className="col-md-4">
           <div className="card ">
             <div className="card-header">
-              <h3 className="card-title">Comptes confermés</h3>
+              <h3 className="card-title">Comptes confirmés</h3>
             </div>
             <div className="card-body p-0">
               <div
