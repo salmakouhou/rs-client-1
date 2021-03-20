@@ -37,11 +37,9 @@ const makeUserService = (api) => ({
 //   findUser: (_id) => api.get(`/users/${_id}`),
 //   findAllUsers: () => api.get(`/users`),
 //   deleteUser: (_id) => api.delete(`/users/${_id}`),
- 
- 
-  
-  
 // });
+
+
 
 const makeUniversityService = (api) => ({
   createUniversity: (university) => api.post(`/universities`, university),
