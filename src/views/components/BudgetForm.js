@@ -115,7 +115,7 @@ const BudgetForm = ({
             </div>}
           {willPrint &&
             <Fragment>
-              {(loading? <button className="btn  btn-sm m-1  btn-outline-primary disabled" >Choisissez une option</button>:  <PDFDownloadLink  className="btn  btn-sm m-1  btn-primary text-white"  document={<ReportTable teamPublications={teamPublications} team={inputs.team} year={inputs.year.toString()} />} fileName={"Rapport"}>
+              {(loading? <button className="btn  btn-sm m-1  btn-outline-primary disabled" >Imprimer le rapport</button>:  <PDFDownloadLink  className="btn  btn-sm m-1  btn-primary text-white"  document={<ReportTable teamPublications={teamPublications} team={inputs.team} year={inputs.year.toString()} />} fileName={"Rapport"}>
                   Imprimer le rapport 
              </PDFDownloadLink>)}
              
