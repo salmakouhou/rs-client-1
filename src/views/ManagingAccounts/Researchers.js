@@ -5,6 +5,7 @@ import PageHeader from "../components/PageHeader";
 import { AppContext } from "../../context/AppContext";
 import UserListItem from "../Author/components/UserListItem";
 import { Link } from "react-router-dom";
+import swal from 'sweetalert';
 
 const Researchers = () => {
   const [researchers, setResearchers] = useState([]);
@@ -39,19 +40,37 @@ const Researchers = () => {
 
   const handleSubmit = async (e) => {
     const password = Math.random().toString(36).slice(-8);
+    swal({
+      title: "Confirmation",
+      text: "Etes vous sur de vouloir inviter cet utilisateur ?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    }).then(async (willDelete) => {
+      if (willDelete) {
+        try {
+          const response = await userService.createUser({
+            email: newEmail,
+            password,
+            roles: "RESEARCHER",
+            creatorId: user._id,
+          });
+          if (response.data){
+            updateData();
+          } else throw Error();
+          swal("L'email à été envoyer avec succès", {
+            icon: "success",
+          });
+        } catch (error) {
+          pushAlert({ message: "Incapable de créer l'utilisateur" });
+        }
+      } else {
+        swal("Abortion du transaction!");
+      }
+    });
 
-    try {
-      const response = await userService.createUser({
-        email: newEmail,
-        password,
-        roles: "RESEARCHER",
-        creatorId: user._id,
-      });
-      if (response.data) updateData();
-      else throw Error();
-    } catch (error) {
-      pushAlert({ message: "Incapable de créer l'utilisateur" });
-    }
+
+
   };
 
   return (
