@@ -10,7 +10,9 @@
     "@testing-library/react": "^9.4.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
+    "blob-util": "^2.0.2",
     "bootstrap": "^4.4.1",
+    "btoa": "^1.2.1",
     "datatables": "^1.10.18",
     "highcharts": "^8.1.2",
     "highcharts-react-official": "^3.0.0",
@@ -30,7 +32,8 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "sweetalert": "^2.1.2"
+    "sweetalert": "^2.1.2",
+    "uint8-to-base64": "^0.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

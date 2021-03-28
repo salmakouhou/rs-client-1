@@ -54,7 +54,7 @@ function LoginPage() {
 
         setTimeout(() => {
           if (response.data.hasConfirmed) history.push("/");
-          else history.push("/settings/account");
+          else history.push("/account");
         }, 1000);
       } else throw Error();
     } catch (e) {

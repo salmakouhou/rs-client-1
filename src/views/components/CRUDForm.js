@@ -25,9 +25,7 @@ const CRUDForm = ({ inputs, setInputs, inputsSkeleton, handleSubmit, cancelEdit,
     }));
       document.getElementById('Co-Directeur de thèse').style.visibility = 'hidden';
       document.getElementById('Directeur de thèse').style.visibility = 'visible';
-
   }
-
   };
 
   useEffect(() => {

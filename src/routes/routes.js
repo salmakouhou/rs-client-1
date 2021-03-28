@@ -24,6 +24,7 @@ import TeamOfDirector from "../views/ManagingEntities/DirectorViews/TeamOfDirect
 import DirectorTeamsStatistics from "../views/Statistics/DirectorTeamsStatistics";
 import DirectorLabsStatistics from "../views/Statistics/DirectorLabStatistics";
 import Archive from '../views/Statistics/Archive'
+import GenralAssembly from '../views/Statistics/GenralAssembly'
 
 import {
   HomeIcon,
@@ -32,10 +33,10 @@ import {
   TeamIcon,
   SettingsIcon,
   PhdIcon,
-
   BudgetIcon,
 
 } from "../views/components/icons";
+
 import TeamsStatistics from "../views/Statistics/TeamsStatistics";
 import LabStatistics from "../views/Statistics/labStatistics";
 import LaboratoryBudget from "../views/ManagingEntities/LaboratoryBudget";
@@ -246,7 +247,7 @@ const budgetPath = {
 }
 
 const reportPath = {
-  title: "Rapport",
+  title: "Archivage",
   isDropdown: true,
   icon: TeamIcon,
   routes: [
@@ -258,10 +259,18 @@ const reportPath = {
       inMenu: true,
     },
     {
-      title: "Archivage",
-      path: "/archive",
+      title: "PV",
+      path: "/pv",
       component: Archive,
       roles: ["LABORATORY_HEAD"],
+      inMenu: true,
+    },
+    {
+      title: "Consultation des PVs",
+      path: "/pvCons",
+      component: GenralAssembly,
+      icon: TeamIcon,
+      roles: ["RESEARCHER"],
       inMenu: true,
     },
   ],
@@ -281,6 +290,8 @@ const followedResearchersPaths = {
     },
   ],
 };
+
+
 const phdStudentsPaths = {
   title: "Doctorants",
   isDropdown: false,
@@ -296,6 +307,9 @@ const phdStudentsPaths = {
   ],
 };
 
+
+
+
 const communPathsCategory = {
   isDropdown: false,
   routes: [
@@ -307,8 +321,6 @@ const communPathsCategory = {
       inMenu: true,
       roles: allRoles,
     },
-
-
     {
       title: "Profile",
       path: "/Profile/:id",
@@ -372,8 +384,7 @@ const menus = [
   StatisticsPaths,
   budgetPath,
   errorPathsCategory,
-  reportPath
-
+  reportPath,
 ];
 
 const routes = [

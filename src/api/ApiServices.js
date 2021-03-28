@@ -11,6 +11,7 @@ import {
   makeStatisticsService,
   makeNotificationsService,
   makePhdStudentsService,
+  makePvUploadService,
 } from "./services";
 
 const makeApiServices = ({ token, alertService }) => {
@@ -21,7 +22,7 @@ const makeApiServices = ({ token, alertService }) => {
       const color = status === "fulfilled" ? "Green" : "Red";
       console.log("%c" + type + " : ", "color:" + color);
       console.log(prenable);
-            console.log(process.env.REACT_APP_BACKEND_URL);
+      console.log(process.env.REACT_APP_BACKEND_URL);
 
       if (type === "response" && status === "rejected") {
         const message = `Une erreur de type : ${prenable.message} depuis le service de ${serviceName} de l'application`;
@@ -87,6 +88,8 @@ const makeApiServices = ({ token, alertService }) => {
     phdStudentService: makePhdStudentsService(backendApi),
     statisticsService: makeStatisticsService(backendApi),
     notificationsService: makeNotificationsService(backendApi),
+    pvUploadService : makePvUploadService(backendApi),
+    
   };
 };
 

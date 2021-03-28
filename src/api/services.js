@@ -7,7 +7,7 @@ const makeScraperService = (api) => ({
   authorSearch: (authorName) => api.get(`/author-search/${authorName}`),
   getAuthorData: (platform, authorId) =>
     api.get(`/author/${platform}/${authorId}`),
-  getJournalData: (jouranlName,year) => api.get(`/journal/${jouranlName}/${year}`),
+  getJournalData: (jouranlName, year) => api.get(`/journal/${jouranlName}/${year}`),
 });
 
 const makeUserService = (api) => ({
@@ -31,6 +31,7 @@ const makeUserService = (api) => ({
     api.get(`/filtering-options/${laboratoryHeadId}`),
   getDirectorFilteringOptions: (directorId) => api.get(`/director-filtering-options/${directorId}`)
 });
+
 // const makePhdService = (api) => ({
 //   createUser: (user) => api.post(`/users`, user),
 //   updateUser: (user) => api.put(`/users`, user),
@@ -39,6 +40,12 @@ const makeUserService = (api) => ({
 //   deleteUser: (_id) => api.delete(`/users/${_id}`),
 // });
 
+const makePvUploadService = (api) => ({
+  createPv: (formData) => api.post(`/pv`, formData),
+  findAllPvs: () => api.get(`/pv`),
+  findPv: (_id) => api.get(`/pv/${_id}`),
+  deletePv : (_id)=>api.delete(`/pv/${_id}`)
+})
 
 
 const makeUniversityService = (api) => ({
@@ -78,6 +85,7 @@ const makeLaboratoryService = (api) => ({
 
 const makeTeamService = (api) => ({
   createTeam: (team) => api.post(`/teams`, team),
+  //createTeam:(team)=> console.log(team),
   updateTeam: (team) => api.put(`/teams`, team),
   findAllTeams: () => api.get(`/teams`),
   findTeam: (_id) => api.get(`/teams/${_id}`),
@@ -96,8 +104,8 @@ const makePhdStudentsService = (api) => ({
   findstudent: (_id) => api.get(`/phdStudents/${_id}`),
   deletePhdStudent: (_id) => api.delete(`/phdStudents/${_id}`),
   findStudentsOfUser: () => api.get(`/phdStudentsOfUser`)
- 
 });
+
 const makeStatisticsService = (api) => ({
   getStatistics: (filter) => api.get(`/statistics`, { params: filter }),
   getPublicationsPerTeam: (filter) => api.get(`/team-publications`, { params: filter }),
@@ -133,4 +141,5 @@ export {
   makeAuthentificationService,
   makeStatisticsService,
   makeNotificationsService,
+  makePvUploadService
 };

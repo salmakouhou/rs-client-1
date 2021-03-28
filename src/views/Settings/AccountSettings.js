@@ -84,9 +84,9 @@ function AccountSettings() {
       });
     }
   };
+
   const updateProfilePicture = async () => {
     const formData = new FormData();
-    
     formData.append("file", profilePicture);
     try {
       const response = await userService.updateProfilePicture(formData);

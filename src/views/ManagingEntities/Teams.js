@@ -36,7 +36,7 @@ const Teams = () => {
       name: "laboratory",
       label: columns[2],
       type: "select",
-      options: laboratories, 
+      options: laboratories,
     },
   ];
   const inputsSkeleton2 = [
@@ -68,8 +68,8 @@ const Teams = () => {
             laboratory: team.laboratory.name,
           }));
         setTeams(filteredTeams);
-        
-        
+
+
       } else throw Error();
     } catch (error) {
       pushAlert({
@@ -152,8 +152,6 @@ const Teams = () => {
             swal("Abortion du transaction!");
           }
         });
-
-     
     } catch (error) {
       pushAlert({ message: "Incapable de supprimer l'équipe" });
     }
@@ -184,7 +182,7 @@ const Teams = () => {
     clearInputs();
   }, []);
 
- 
+
   return (
     <Fragment>
       <div className="page-header">
