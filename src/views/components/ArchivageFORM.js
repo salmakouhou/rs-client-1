@@ -41,7 +41,8 @@ const ArchivageFORM = ({ inputs,setInputs, handleSubmit, inputsSkeleton, cancelE
 
                     <div className="form-group mt-2 ">
                       <label className="form-label">{input.label}</label>
-                      <input type="file" className="custom-file-input" name="myImage" onChange={handleInputsChange} multiple name={input.name} required/>
+                      <input type="file" className="custom-file-input form-control"
+                      onChange={handleInputsChange} multiple name={input.name} required/>
                     </div>
                   )}
                 </Fragment>

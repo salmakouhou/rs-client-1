@@ -11,6 +11,8 @@ const makeScraperService = (api) => ({
 });
 
 const makeUserService = (api) => ({
+  findAllPublications: () => api.get("/publications"),
+
   createUser: (user) => api.post(`/users`, user),
   updateUser: (user) => api.put(`/users`, user),
   findUser: (_id) => api.get(`/users/${_id}`),
@@ -29,7 +31,8 @@ const makeUserService = (api) => ({
   getFollowedUsers: (filter) => api.get(`/followed-users`, { params: filter }),
   getFilteringOptions: (laboratoryHeadId) =>
     api.get(`/filtering-options/${laboratoryHeadId}`),
-  getDirectorFilteringOptions: (directorId) => api.get(`/director-filtering-options/${directorId}`)
+  getDirectorFilteringOptions: (directorId) => api.get(`/director-filtering-options/${directorId}`),
+
 });
 
 // const makePhdService = (api) => ({
@@ -44,7 +47,7 @@ const makePvUploadService = (api) => ({
   createPv: (formData) => api.post(`/pv`, formData),
   findAllPvs: () => api.get(`/pv`),
   findPv: (_id) => api.get(`/pv/${_id}`),
-  deletePv : (_id)=>api.delete(`/pv/${_id}`)
+  deletePv: (_id) => api.delete(`/pv/${_id}`)
 })
 
 
