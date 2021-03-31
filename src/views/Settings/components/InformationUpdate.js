@@ -10,8 +10,9 @@ function InformationUpdate({
   profilePicture,
   setProfilePicture,
   updateProfilePicture,
+  loading
 }) {
-  const { user, UserHelper , alertService} = useContext(AppContext);
+  const { user, UserHelper, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
 
   useEffect(() => {
@@ -36,6 +37,7 @@ function InformationUpdate({
 
   return (
     <div className="col-md-8">
+
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Mise à jour du compte</h3>
@@ -76,8 +78,7 @@ function InformationUpdate({
                 <div className="mb-3">
                   <button
                     className=" btn btn-primary"
-                    onClick={updateProfilePicture}
-                  >
+                    onClick={updateProfilePicture}>
                     Update
                   </button>
                 </div>

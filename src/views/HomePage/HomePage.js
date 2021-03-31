@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { LoopIcon, SettingsIcon } from "../components/icons";
 import { AppContext } from "../../context/AppContext";
 import { Bar } from 'react-chartjs-2';
+import Icon from '@mdi/react';
+import { mdiAccountGroupOutline ,mdiAccountGroup  } from '@mdi/js';
 
 const HomePage = () => {
   const { user, UserHelper } = useContext(AppContext);
@@ -111,8 +113,11 @@ const HomePage = () => {
             <div class="card-body">
               <div class="d-flex flex-row">
                 <div class="col-3 align-self-center">
-                  <div class="round bg-success">
-                    <i class="mdi mdi-cellphone-android text-white"></i>
+                  <div class="round ">
+                    <Icon path={mdiAccountGroup }
+                      size={2}
+
+                      color="#5cb85c" />
                   </div>
                 </div>
                 <div class="col-9 align-self-center text-right">
@@ -131,8 +136,10 @@ const HomePage = () => {
             <div class="card-body">
               <div class="d-flex flex-row">
                 <div class="col-3 align-self-center">
-                  <div class="round bg-warning">
-                    <i class="mdi mdi-water text-white"></i>
+                  <div class="round ">
+                    <Icon path={mdiAccountGroupOutline }
+                      size={2}
+                      color="#f0ad4e" />
                   </div>
                 </div>
                 <div class="col-9 text-right align-self-center">

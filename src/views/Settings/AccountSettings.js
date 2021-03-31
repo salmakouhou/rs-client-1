@@ -116,6 +116,7 @@ function AccountSettings() {
         setProfilePicture={setProfilePicture}
         profilePicture={profilePicture}
         updateProfilePicture={updateProfilePicture}
+        loading
       />
       <PasswordUpdate
         passwordUpdate={passwordUpdate}
