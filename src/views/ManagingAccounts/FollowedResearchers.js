@@ -37,8 +37,11 @@ const FollowedResearchers = () => {
   }, []);
 
   const updateFollowedUsersData = useCallback(async () => {
+    console.log(filter)
     try {
       const response = await userService.getFollowedUsers(filter);
+      console.log(response.data)
+
       if (response.data) setFollowedResearchers(response.data);
       else throw Error();
     } catch (error) {

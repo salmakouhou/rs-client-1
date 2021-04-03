@@ -12,6 +12,7 @@ const makeScraperService = (api) => ({
 
 const makeUserService = (api) => ({
   findAllPublications: () => api.get("/publications"),
+  findAllReasearchersOfLab: (_id) => api.get(`/users/lab/${_id}`),
 
   createUser: (user) => api.post(`/users`, user),
   updateUser: (user) => api.put(`/users`, user),

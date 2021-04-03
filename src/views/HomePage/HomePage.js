@@ -5,11 +5,14 @@ import image2 from "../../assets/images/illustrations/undraw_hire_te5y.svg";
 import { Link } from "react-router-dom";
 import { LoopIcon, SettingsIcon } from "../components/icons";
 import { AppContext } from "../../context/AppContext";
-import { Bar } from 'react-chartjs-2';
+import { Bar ,Chart} from 'react-chartjs-2';
 import Icon from '@mdi/react';
-import { mdiAccountGroupOutline ,mdiAccountGroup  } from '@mdi/js';
+import { mdiAccountGroupOutline, mdiAccountGroup, mdiNoteMultiple } from '@mdi/js';
+import ResearcherCard from "../ManagingAccounts/components/ResearcherCard";
 
 const HomePage = () => {
+  Chart.defaults.global.legend.labels.usePointStyle = true;
+
   const { user, UserHelper } = useContext(AppContext);
   const { ApiServices } = useContext(AppContext);
   const { userService, phdStudentService } = ApiServices;
@@ -18,41 +21,27 @@ const HomePage = () => {
   const [doctorants, setDoctorants] = useState([]);
   const [state, setState] = useState({});
   const [classement, setClassement] = useState({});
+  const [pubs, setPubs] = useState();
 
   const updateStats = useCallback(async () => {
     try {
-      const response = await userService.findAllUsers();
-      var filtredUsers = new Array();
-      response.data.forEach((element) => {
-        element.roles.forEach((role) => {
-          if (role == "RESEARCHER") filtredUsers.push(element);
-        })
-      });
+      const connectedUser = JSON.parse(localStorage.getItem("user"));
+      const response = await userService.getFollowedUsers({ "laboratory_abbreviation": connectedUser.laboratoriesHeaded[0].abbreviation });
       if (response.data) {
         setReaserchers(
-          filtredUsers
+          response.data
         );
-      }
-      else throw Error();
+        console.log(response.data)
+        var count = 0;
+        response.data.forEach((e) => {
+          count += e.publications.length;
+        })
+        setPubs(count);
 
-      const responseDoctorant = await phdStudentService.findAllPhdStudents();
-      var filtredDoctorants = new Array();
-
-      if (responseDoctorant.data) {
-        responseDoctorant.data.forEach((element) => {
-          if (parseInt(element.end.split("-")[0]) >= new Date().getFullYear()) filtredDoctorants.push(element);
-        });
-        setDoctorants(
-          filtredDoctorants
-        );
-      } else throw Error();
-
-      var pubData = new Map();
-      var nom = new Array();
-      var nombre = new Array();
-      const responsePub = await userService.findAllPublications();
-      if (responsePub.data) {
-        responsePub.data.forEach((data) => {
+        var pubData = new Map();
+        var nom = new Array();
+        var nombre = new Array();
+        response.data.forEach((data) => {
           nom.push(data.name);
           nombre.push(data.publications.length)
           data.publications.forEach((pub) => {
@@ -60,12 +49,12 @@ const HomePage = () => {
           })
         })
 
-        responsePub.data.forEach((data) => {
+        response.data.forEach((data) => {
           data.publications.forEach((pub) => {
             pubData.set(pub.year, pubData.get(pub.year) + 1)
           })
         })
-        var keys = Array.from(pubData.keys());
+        var keys = Array.from(pubData.keys()).sort();
         var data = new Array();
         keys.forEach((key) => {
           data.push(pubData.get(key));
@@ -90,9 +79,24 @@ const HomePage = () => {
             }
           ]
         })
+      }
+      else throw Error();
 
+      const responseDoctorant = await phdStudentService.findStudentsOfUser();
+      const { students } = responseDoctorant.data;
+      var filtredDoctorants = new Array();
 
+      if (responseDoctorant.data) {
+        students.forEach((element) => {
+          if (parseInt(element.end.split("-")[0]) >= new Date().getFullYear()) filtredDoctorants.push(element);
+        });
+        setDoctorants(
+          filtredDoctorants
+        );
       } else throw Error();
+
+
+
 
     } catch (error) {
       console.log(error)
@@ -101,20 +105,48 @@ const HomePage = () => {
 
   }, []);
 
+
+
   useEffect(() => {
     updateStats();
   }, [updateStats]);
 
+  /**
+  <div class="col-sm-12" >
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex flex-row">
+                  <Bar
+                    data={classement}
+                    height={100}
+                    options={{
+                      title: {
+                        display: true,
+                        text: 'Classement des chercheurs (nombre de publications)',
+                      },
+                      legend: {
+                        display: true,
+                        position: 'top'
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>  
+
+   */
+
   return (
     <div class="container">
-      <div class="row">
-        <div class="col-sm-6">
+      {user.roles.includes("LABORATORY_HEAD") ? <div class="row">
+        <div class="col-sm-4">
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-row">
                 <div class="col-3 align-self-center">
                   <div class="round ">
-                    <Icon path={mdiAccountGroup }
+                    <Icon path={mdiAccountGroup}
                       size={2}
 
                       color="#5cb85c" />
@@ -131,13 +163,13 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-4">
           <div class="card">
             <div class="card-body">
               <div class="d-flex flex-row">
                 <div class="col-3 align-self-center">
                   <div class="round ">
-                    <Icon path={mdiAccountGroupOutline }
+                    <Icon path={mdiAccountGroupOutline}
                       size={2}
                       color="#f0ad4e" />
                   </div>
@@ -152,34 +184,56 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </div>
-      <div className="row">
-        <div
-          className={`empty  text-center ${user.roles.includes("TEAM_HEAD") ? "col-md-6" : "col-md-12"
-            }`}
-        >
-          <div className="empty-icon">
-            <img src={image1} className="h-8 mb-4" alt="" />
-          </div>
-          <p className="empty-title h3">Bienvenue sur la page d'accueil </p>
-          <p className="empty-subtitle text-muted">
-            Essayez d'utiliser la barre de recherche pour trouver l'auteur que
-            vous recherchez.
-        </p>
-          <div className="empty-action">
-            <button
-              onClick={() => {
-                document.getElementById("author-search-input").focus();
-              }}
-              className="btn btn-primary"
-            >
-              <LoopIcon />
-            Rechercher un auteur
-          </button>
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex flex-row">
+                <div class="col-3 align-self-center">
+                  <div class="round ">
+                    <Icon path={mdiNoteMultiple}
+                      size={2}
+                      color="#d9534f" />
+                  </div>
+                </div>
+                <div class="col-9 text-right align-self-center">
+                  <div class="m-l-10 ">
+                    <h5 class="mt-0">{pubs}</h5>
+                    <p class="mb-0 text-muted">Nombre des publications</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div> : ""}
 
-        {user.roles.includes("TEAM_HEAD") && (
+      <div className="row">
+        {!user.roles.includes("LABORATORY_HEAD") && (
+          <div
+            className={`empty  text-center ${user.roles.includes("TEAM_HEAD") ? "col-md-6" : "col-md-12"
+              }`}
+          >
+            <div className="empty-icon">
+              <img src={image1} className="h-8 mb-4" alt="" />
+            </div>
+            <p className="empty-title h3">Bienvenue sur la page d'accueil </p>
+            <p className="empty-subtitle text-muted">
+              Essayez d'utiliser la barre de recherche pour trouver l'auteur que
+              vous recherchez.</p>
+            <div className="empty-action">
+              <button
+                onClick={() => {
+                  document.getElementById("author-search-input").focus();
+                }}
+                className="btn btn-primary"
+              >
+                <LoopIcon />Rechercher un auteur</button>
+            </div>
+          </div>
+        )}
+
+
+        {user.roles.includes("TEAM_HEAD") && !user.roles.includes("LABORATORY_HEAD") && (
           <div className="empty col-md-6">
             <div className="empty-icon">
               <img src={image2} className="h-8 mb-4" alt="" />
@@ -201,52 +255,33 @@ const HomePage = () => {
           </div>
         )}
       </div>
-      <div class="row">
-        <div class="col-sm-12" >
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex flex-row">
-                <Bar
-                  data={state}
-                  height={100}
-                  options={{
-                    title: {
-                      display: true,
-                      text: 'Nombre des publications par année',
-                    },
-                    legend: {
-                      display: true,
-                      position: 'top'
-                    }
-                  }}
-                />
+      {user.roles.includes("LABORATORY_HEAD") && (
+        <div class="row">
+          <div class="col-sm-12" >
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex flex-row">
+                  <Bar
+                    data={state}
+                    height={100}
+                    options={{
+                      title: {
+                        display: true,
+                        text: 'Nombre des publications par année',
+                      },
+                      legend: {
+                        display: true,
+                        position: 'top'
+                      }
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-12" >
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex flex-row">
-                <Bar
-                  data={classement}
-                  height={100}
-                  options={{
-                    title: {
-                      display: true,
-                      text: 'Classement des chercheurs (nombre de publications)',
-                    },
-                    legend: {
-                      display: true,
-                      position: 'top'
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
+          
+        </div>)}
     </div>
   );
 };
