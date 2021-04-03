@@ -10,7 +10,6 @@ function InformationUpdate({
   profilePicture,
   setProfilePicture,
   updateProfilePicture,
-  loading
 }) {
   const { user, UserHelper, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
