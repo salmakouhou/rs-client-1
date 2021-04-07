@@ -16,7 +16,7 @@ const LabStatistics = () => {
   const [researchersStatistics, setResearchersStatistics] = useState([]);
   const [labsStatistics, setLabsStatistics] = useState([]);
 
-   const [selectedLabs, setSelectedLabs] = useState([]);
+  const [selectedLabs, setSelectedLabs] = useState([]);
   const [
     filteredResearchersStatistics,
     setFilteredResearchersStatistics,
@@ -51,220 +51,190 @@ const LabStatistics = () => {
     },
   });
 
- 
-  const getLabData = useCallback(async (lab) =>{
+
+  const getLabData = useCallback(async (lab) => {
+
     setResearchersStatistics([]);
     Promise.all(lab.teams.map(
-      (async (team)=>{
-        const response = await statisticsService.getStatistics({[`team_abbreviation`]: team.abbreviation});
-      if (response.data)  setResearchersStatistics(researcherStatistics => researcherStatistics.concat(response.data));
-      else throw Error();
-     
- 
-    
+      (async (team) => {
+        const response = await statisticsService.getStatistics({ [`team_abbreviation`]: team.abbreviation });
+        if (response.data) setResearchersStatistics(researcherStatistics => researcherStatistics.concat(response.data));
+        else throw Error();
       })
     ))
-  },[statisticsService])
-  
-    const deleteLab = (abbreviation)=> {  
-      console.log("deleting");
-      for(let i in labsStatistics){
-        if(labsStatistics[i].lab === abbreviation){
-          if(i===0){
-            console.log(i);
-            labsStatistics.shift();
-          }
-          console.log(i);
-          labsStatistics.splice(i , 1);
-          
+  }, [statisticsService])
+
+  const deleteLab = (abbreviation) => {
+    for (let i in labsStatistics) {
+      if (labsStatistics[i].lab === abbreviation) {
+        if (i === 0) {
+          labsStatistics.shift();
         }
-      }    
+        labsStatistics.splice(i, 1);
+
+      }
     }
-  
+  }
 
-    const updateEstablishmentData = useCallback(async () => {
 
-      let response = await establishmentService.getEstablishmentOfDirector(user._id);
-      setEstablishments(
-          response.data.map((establishment) => ({
-            ...establishment,
-           
-          }))
-      );
-    }, [establishmentService]);
-  
-
-  
+  const updateEstablishmentData = useCallback(async () => {
+    let response = await establishmentService.getEstablishmentOfDirector(user._id);
+    setEstablishments(
+      response.data.map((establishment) => ({
+        ...establishment,
+      }))
+    );
+  }, [establishmentService]);
 
 
   const updateLaboratoryData = useCallback(async () => {
     let response = await laboratoryService.findAllLaboratories();
     setLaboratories(
-        response.data.map((laboratory) => ({
-          ...laboratory,
-          establishment: laboratory.establishment.name,
-        }))
+      response.data.map((laboratory) => ({
+        ...laboratory,
+        establishment: laboratory.establishment.name,
+      }))
     );
   }, [laboratoryService]);
 
-  const updateLabsStatistics = useCallback (async() =>{
+  const updateLabsStatistics = useCallback(async () => {
     let yearsRange = [];
-    let teamStats= {};
-    console.log("in lab");
+    let teamStats = {};
 
-    for (let i = dateRange.start; i <= dateRange.end; i++){ yearsRange.push(i); teamStats[i]=0};   
-      var publicar=[] ;
-      for(var i=0;i<researchersStatistics.length;i++){
+    for (let i = dateRange.start; i <= dateRange.end; i++) {
+      yearsRange.push(i);
+      teamStats[i] = 0
+    };
 
-        publicar.push(researchersStatistics[i].publications);
+    var publicar = [];
+    for (var i = 0; i < researchersStatistics.length; i++) {
+      publicar.push(researchersStatistics[i].publications);
+    }
 
+    var yearandtitle = []
+    for (var t = 0; t < publicar.length; t++) {
 
-      }
-     var yearandtitle=[]
-      for(var t=0 ; t<publicar.length;t++){
-      
       publicar[t].forEach(element => {
-        yearandtitle.push({title:element.title.toLowerCase(),year:element.year});
-          });
-        
+        yearandtitle.push({ title: element.title.toLowerCase(), year: element.year });
+      });
 
-      }
-      const seen = new Set();
-      const filteredArr = yearandtitle.filter(el => {
-        const duplicate = seen.has(el.title);
-        seen.add(el.title);
-        return !duplicate;
-      });
-      for(var r=0;r<filteredArr.length;r++){
-        console.log(filteredArr[r].year);
-      }
-      yearsRange.forEach(year => {
-      console.log(year)
-       for(var r=0;r<filteredArr.length;r++){
-         
-        if(filteredArr[r].year==year){
-         
-             teamStats[year]=teamStats[year]+1
-           }
-       
-      } 
-      });
-   
-      console.log(teamStats);
-      console.log(currentLab);
+    }
+
+    const seen = new Set();
+    const filteredArr = yearandtitle.filter(el => {
+      const duplicate = seen.has(el.title);
+      seen.add(el.title);
+      return !duplicate;
+    });
+
     
-        console.log("heere");
-        if(currentLab!== null )
-        
-        {
-          deleteLab(currentLab.abbreviation);
+    yearsRange.forEach(year => {
+      for (var r = 0; r < filteredArr.length; r++) {
+        if (filteredArr[r].year == year) {
+          teamStats[year] = teamStats[year] + 1
         }
-        
-        if(labsStatistics.length <=selectedLabs.length && selectedLabs.length>0)
+      }
+    });
 
-      {
-        console.log("adding to selected labs");
-        console.log(teamStats);
-        setLabsStatistics( teamsStatistics=> teamsStatistics.concat({
-        'lab': selectedLabs[selectedLabs.length-1].abbreviation,
+    if (currentLab !== null) {
+      deleteLab(currentLab.abbreviation);
+    }
+
+    if (labsStatistics.length <= selectedLabs.length && selectedLabs.length > 0) {
+      setLabsStatistics(teamsStatistics => teamsStatistics.concat({
+        'lab': selectedLabs[selectedLabs.length - 1].abbreviation,
         'publications': teamStats
       })
-       );}
-    
- 
+      );
+    }
   });
 
-  const updateChart =(async() => {
+  const updateChart = (async () => {
     let yearsRange = [];
-    let teamStats= {};
-    console.log("in chart");
-    for (let i = dateRange.start; i <= dateRange.end; i++){ yearsRange.push(i); teamStats[i]=0};   
-  
-    const columns =   
-    labsStatistics
-      .map((labStatistics) =>
-      
-        [labStatistics.lab].concat(
-          yearsRange.map((year) =>  labStatistics.publications[year] ?? 0)
-        ) 
-      )    
-      .concat([["x"].concat(yearsRange)]);
+    let teamStats = {};
+    for (let i = dateRange.start; i <= dateRange.end; i++) { yearsRange.push(i); teamStats[i] = 0 };
+
+    const columns =
+      labsStatistics
+        .map((labStatistics) =>
+
+          [labStatistics.lab].concat(
+            yearsRange.map((year) => labStatistics.publications[year] ?? 0)
+          )
+        )
+        .concat([["x"].concat(yearsRange)]);
 
     setChart(() => ({
-     
-      data:{
-      x: "x",
+
+      data: {
+        x: "x",
         columns,
         type: 'line',
-      
-      
-    }}));
-    console.log(columns);
+      }
+    }));
     setChartVersion(chartVersion + 1);
-  
+
   });
-  
 
 
 
-  const updateStatistics = () => {}; 
+
+  const updateStatistics = () => { };
 
   useEffect(() => {
-    updateLaboratoryData(); 
-   
+    updateLaboratoryData();
+
   }, [user]);
 
   useEffect(() => {
-   
+
     updateEstablishmentData();
-   
+
   }, [user]);
 
-  useEffect( () => {if (selectedLabs.length !== 0){
-    getLabData( currentLab);
-    console.log("currentLab");
-   console.log(currentLab);
- }
- }, [ selectedLabs]);
-
-  useEffect( () => {
-     
-    updateLabsStatistics();
-   
-  
-  }, [researchersStatistics, selectedLabs]);
- 
-
-
-  useEffect(() => { 
-   
-    updateChart();
-    }, [selectedLabs,JSON.stringify(researchersStatistics),JSON.stringify(labsStatistics)]);
-
-    useEffect(() => { 
-      console.log(labsStatistics)
-     }, [labsStatistics])
+  useEffect(() => {
+    if (selectedLabs.length !== 0) {
+      getLabData(currentLab);
+    }
+  }, [selectedLabs]);
 
   useEffect(() => {
-    if (selectedLabs != null){
+
+    updateLabsStatistics();
+
+
+  }, [researchersStatistics, selectedLabs]);
+
+
+
+  useEffect(() => {
+
     updateChart();
-  
+  }, [selectedLabs, JSON.stringify(researchersStatistics), JSON.stringify(labsStatistics)]);
+
+  useEffect(() => {
+    console.log(labsStatistics)
+  }, [labsStatistics])
+
+  useEffect(() => {
+    if (selectedLabs != null) {
+      updateChart();
+
     }
-  },[dateRange.end,
-    dateRange.start,JSON.stringify(labsStatistics)])
+  }, [dateRange.end,
+  dateRange.start, JSON.stringify(labsStatistics)])
 
-    useEffect(() => { 
-      console.log(selectedLabs);
-      updateLabsStatistics();
+  useEffect(() => {
+    updateLabsStatistics();
 
-     }, [selectedLabs])
- 
+  }, [selectedLabs])
 
-  
+
+
 
   return (
     <div className="container">
-      
+
       <div className="row">
         <div className="col-md-4">
 
@@ -273,17 +243,17 @@ const LabStatistics = () => {
             setDateRange={setDateRange}
             updateStatistics={updateStatistics}
           />
-         
-          <LabFilter {... {laboratories, establishments, selectedLabs, setSelectedLabs, currentLab, setCurrentLab}}/>
+
+          <LabFilter {... { laboratories, establishments, selectedLabs, setSelectedLabs, currentLab, setCurrentLab }} />
         </div>
-          <div className="col-md-8">
+        <div className="col-md-8">
           <div className="card">
             <div id="chartData-development-activity" className="mt-4">
               <div
                 id="apexchartDatas28b504"
                 className="apexchartDatas-canvas apexchartDatas28b504 apexchartDatas-theme-light"
               >
-                 {labsStatistics.length > 0 && (
+                {labsStatistics.length > 0 && (
                   <C3Chart
                     key={chartVersion}
                     data={chart.data}
@@ -295,20 +265,20 @@ const LabStatistics = () => {
                       show: true,
                     }}
                   />
-                 )}
+                )}
                 {labsStatistics.length === 0 && (
                   <NoResultFound query={searchTerm} />
                 )}
               </div>
             </div>
-          
 
+
+          </div>
         </div>
       </div>
-        </div>
-        </div>
-     
-   
+    </div>
+
+
   );
 };
 

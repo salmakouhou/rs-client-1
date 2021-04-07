@@ -30,8 +30,10 @@ const Archive = () => {
     ];
 
     const updatePvData = useCallback(async () => {
+        const connectedUser = JSON.parse(localStorage.getItem("user"));
+
         try {
-            const response = await pvUploadService.findAllPvs();
+            const response = await pvUploadService.findAllPvs(connectedUser.laboratoriesHeaded[0]._id);
             if (response.data) {
                 setPvs(
                     response.data.map((pv) => ({

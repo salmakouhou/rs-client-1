@@ -5,10 +5,9 @@ import image2 from "../../assets/images/illustrations/undraw_hire_te5y.svg";
 import { Link } from "react-router-dom";
 import { LoopIcon, SettingsIcon } from "../components/icons";
 import { AppContext } from "../../context/AppContext";
-import { Bar ,Chart} from 'react-chartjs-2';
+import { Bar, Chart } from 'react-chartjs-2';
 import Icon from '@mdi/react';
 import { mdiAccountGroupOutline, mdiAccountGroup, mdiNoteMultiple } from '@mdi/js';
-import ResearcherCard from "../ManagingAccounts/components/ResearcherCard";
 
 const HomePage = () => {
   Chart.defaults.global.legend.labels.usePointStyle = true;
@@ -24,19 +23,30 @@ const HomePage = () => {
   const [pubs, setPubs] = useState();
 
   const updateStats = useCallback(async () => {
+    const connectedUser = JSON.parse(localStorage.getItem("user"));
+
+
     try {
-      const connectedUser = JSON.parse(localStorage.getItem("user"));
+      const respDoc = await phdStudentService.findPhdStudentOfLab();
+      if(respDoc.data){
+        var filtredDoc = new Array();
+        respDoc.data.students.forEach((doc)=>{
+          if(parseInt(doc.end.split('-')[0])>=new Date().getFullYear())
+            filtredDoc.push(doc)
+        })
+        setDoctorants(filtredDoc)
+      }else throw Error();
+
       const response = await userService.getFollowedUsers({ "laboratory_abbreviation": connectedUser.laboratoriesHeaded[0].abbreviation });
       if (response.data) {
         setReaserchers(
           response.data
         );
-        console.log(response.data)
         var count = 0;
         response.data.forEach((e) => {
           count += e.publications.length;
         })
-        setPubs(count);
+
 
         var pubData = new Map();
         var nom = new Array();
@@ -45,15 +55,24 @@ const HomePage = () => {
           nom.push(data.name);
           nombre.push(data.publications.length)
           data.publications.forEach((pub) => {
-            pubData.set(pub.year, 1)
+            pubData.set(pub.year, 0)
           })
         })
 
+        var occ = new Set();
         response.data.forEach((data) => {
           data.publications.forEach((pub) => {
-            pubData.set(pub.year, pubData.get(pub.year) + 1)
+            if (!occ.has(pub.title.toLowerCase())) {
+              occ.add(pub.title.toLowerCase());
+              pubData.set(pub.year, pubData.get(pub.year) + 1)
+            }
           })
         })
+
+        setPubs(occ.size)
+
+
+
         var keys = Array.from(pubData.keys()).sort();
         var data = new Array();
         keys.forEach((key) => {
@@ -82,18 +101,6 @@ const HomePage = () => {
       }
       else throw Error();
 
-      const responseDoctorant = await phdStudentService.findStudentsOfUser();
-      const { students } = responseDoctorant.data;
-      var filtredDoctorants = new Array();
-
-      if (responseDoctorant.data) {
-        students.forEach((element) => {
-          if (parseInt(element.end.split("-")[0]) >= new Date().getFullYear()) filtredDoctorants.push(element);
-        });
-        setDoctorants(
-          filtredDoctorants
-        );
-      } else throw Error();
 
 
 
@@ -111,31 +118,6 @@ const HomePage = () => {
     updateStats();
   }, [updateStats]);
 
-  /**
-  <div class="col-sm-12" >
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex flex-row">
-                  <Bar
-                    data={classement}
-                    height={100}
-                    options={{
-                      title: {
-                        display: true,
-                        text: 'Classement des chercheurs (nombre de publications)',
-                      },
-                      legend: {
-                        display: true,
-                        position: 'top'
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>  
-
-   */
 
   return (
     <div class="container">
@@ -279,8 +261,30 @@ const HomePage = () => {
               </div>
             </div>
           </div>
+          <div class="col-sm-12" >
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex flex-row">
+                  <Bar
+                    data={classement}
+                    height={100}
+                    options={{
+                      title: {
+                        display: true,
+                        text: 'Classement des chercheurs (nombre de publications)',
+                      },
+                      legend: {
+                        display: true,
+                        position: 'top'
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
 
-          
+
         </div>)}
     </div>
   );

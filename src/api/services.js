@@ -46,7 +46,7 @@ const makeUserService = (api) => ({
 
 const makePvUploadService = (api) => ({
   createPv: (formData) => api.post(`/pv`, formData),
-  findAllPvs: () => api.get(`/pv`),
+  findAllPvs: (_id) => api.get(`/pv/${_id}`),
   findPv: (_id) => api.get(`/pv/${_id}`),
   deletePv: (_id) => api.delete(`/pv/${_id}`)
 })
@@ -104,10 +104,11 @@ const makeTeamService = (api) => ({
 const makePhdStudentsService = (api) => ({
   createPhdStudent: (phdStudent) => api.post(`/phdStudents`, phdStudent),
   updatePhdStudent: (phdStudent) => api.put(`/phdStudents`, phdStudent),
-  findAllPhdStudents: () => api.get(`/phdStudents`),
+  findAllPhdStudents: (_id) => api.get(`/phdStudentsLab/${_id}`),
   findstudent: (_id) => api.get(`/phdStudents/${_id}`),
   deletePhdStudent: (_id) => api.delete(`/phdStudents/${_id}`),
-  findStudentsOfUser: () => api.get(`/phdStudentsOfUser`)
+  findStudentsOfUser: () => api.get(`/phdStudentsOfUser`),
+  findPhdStudentOfLab : ()=>api.get(`/phdStudentsLabs/`)
 });
 
 const makeStatisticsService = (api) => ({
