@@ -6,6 +6,7 @@ import { AppContext } from "../../context/AppContext";
 import { encode, decode } from 'uint8-to-base64';
 import ArchiveTable from "../components/ArchiveTable";
 import swal from 'sweetalert';
+import ArchiveTree from "../components/ArchiveTree";
 
 
 const Archive = () => {
@@ -28,6 +29,8 @@ const Archive = () => {
         { name: "rapport", label: columns2[1], type: "input" },
         { name: "annexe", label: columns2[2], type: "input" },
     ];
+
+
 
     const updatePvData = useCallback(async () => {
         const connectedUser = JSON.parse(localStorage.getItem("user"));
@@ -60,23 +63,29 @@ const Archive = () => {
                 dangerMode: true,
             }).then(async (willDelete) => {
                 if (willDelete) {
-                    const laboratoryId = JSON.parse(localStorage.getItem("user")).laboratoriesHeaded[0]._id;
-                    const formData = new FormData();
-                    formData.append('file1', inputs.file1);
-                    formData.append('file2', inputs.file2);
-                    formData.append('date', inputs.date);
-                    formData.append('laboratory_id', laboratoryId);
+                    try {
+                        const laboratoryId = JSON.parse(localStorage.getItem("user")).laboratoriesHeaded[0]._id;
+                        const formData = new FormData();
+                        var keys = Object.keys(inputs);
+                        keys.forEach((key) => {
+                            formData.append(key, inputs[key])
+                        })
 
-                    const response = await pvUploadService.createPv(formData);
-                    
-                    swal("Le procès verbale à été ajouter avec succès", {
-                        icon: "success",
-                    });
-                    if (response.data){
-                        updatePvData();
-                        clearInputs();
+                        formData.append('laboratory_id', laboratoryId);
+
+                        const response = await pvUploadService.createPv(formData);
+
+                        swal("Le procès verbale à été ajouter avec succès", {
+                            icon: "success",
+                        });
+                        if (response.data) {
+                            updatePvData();
+                            clearInputs();
+                        }
+                        else throw Error();
+                    } catch (error) {
+
                     }
-                    else throw Error();
                 } else {
                     swal("Abortion du transaction!");
                 }
@@ -193,6 +202,21 @@ const Archive = () => {
         clearInputs();
     }, [updatePvData]);
 
+    /**
+     * <ArchiveTable
+                            columns={columns2}
+                            data={pvs}
+                            tableSkeleton={inputsSkeleton2}
+                            actions={[
+                                { name: "Rapport", function: downloadRapport, style: "danger" },
+                                { name: "Annexe", function: downloadAnnexe, style: "success" },
+                                { name: "Supprimer", function: deletePv, style: "danger" },
+    
+                            ]}
+                        />
+     */
+
+
     return (
         <Fragment>
             <div className="page-header">
@@ -202,7 +226,7 @@ const Archive = () => {
                 />
             </div>
             <div className="row row-cards row-deck">
-                <div className="col-md-4">
+                <div className="col-md-6">
                     <ArchivageFORM
                         {...{
                             inputs,
@@ -214,18 +238,16 @@ const Archive = () => {
                     />
 
                 </div>
-                <div className="col-md-8">
-                    <ArchiveTable
-                        columns={columns2}
-                        data={pvs}
-                        tableSkeleton={inputsSkeleton2}
-                        actions={[
-                            { name: "Rapport", function: downloadRapport, style: "danger" },
-                            { name: "Annexe", function: downloadAnnexe, style: "success" },
-                            { name: "Supprimer", function: deletePv, style: "danger" },
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-header">
+                            <h3 className="card-title">Les Pvs</h3>
+                        </div>
+                        <div className={`card-body form `}>
+                            <ArchiveTree data={pvs} />
 
-                        ]}
-                    />
+                        </div>
+                    </div>
                 </div>
 
             </div>

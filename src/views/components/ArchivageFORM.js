@@ -6,11 +6,15 @@ const ArchivageFORM = ({ inputs,setInputs, handleSubmit, inputsSkeleton, cancelE
   const handleInputsChange = (event) => {
     event.persist();
     if (event.target.name == "file") {
-      setInputs((inputs) => ({
-        ...inputs,
-        [event.target.name+"1"]: event.target.files[0],
-        [event.target.name+"2"]:event.target.files[1],
-      }));
+      var keys = Object.keys(event.target.files);
+      var files = event.target.files
+      keys.forEach((key)=>{
+        setInputs((inputs) => ({
+          ...inputs,
+          [files[key].lastModified]: files[key],
+        }));
+      })
+     
     } else {
       setInputs((inputs) => ({
         ...inputs,
@@ -41,7 +45,7 @@ const ArchivageFORM = ({ inputs,setInputs, handleSubmit, inputsSkeleton, cancelE
 
                     <div className="form-group mt-2 ">
                       <label className="form-label">{input.label}</label>
-                      <input type="file" className="custom-file-input form-control"
+                      <input type="file" className="custom-file-input form-control"  accept=".pdf, .xlsx, .xls"
                       onChange={handleInputsChange} multiple name={input.name} required/>
                     </div>
                   )}
