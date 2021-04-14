@@ -9,7 +9,7 @@ const UserPicture = ({ user, size, badge }) => {
     return Buffer.from(input, 'utf-8').toString('base64')
   }
   const test = () => {
-    console.log(user.profilePicture)
+    console.log(user)
   }
   test()
   return (
