@@ -10,9 +10,10 @@ const UserPicture = ({ user, size, badge }) => {
   }
   return (
     <div className="col-auto">
+       <p>test</p>
       {user.profilePicture != null && (
         <div>
-          <p>test</p>
+         
           <p>{user.profilePicture.name}</p>
           <p>{user.profile.mimetype}</p>
           <span
