@@ -10,7 +10,7 @@ const UserPicture = ({ user, size, badge }) => {
   }
   return (
     <div className="col-auto">
-       <p>test</p>
+       <p>test user piscture</p>
       {user.profilePicture != null && (
         <div>
          
