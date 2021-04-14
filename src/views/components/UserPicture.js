@@ -1,13 +1,20 @@
 import React from "react";
+import { Buffer } from 'buffer'
 
+/*
+
+*/
 const UserPicture = ({ user, size, badge }) => {
+  const toBase64 = (input) => {
+    return Buffer.from(input, 'utf-8').toString('base64')
+  }
   return (
     <div className="col-auto">
       {user.profilePicture != null && (
         <span
           className={`avatar avatar-${size}`}
           style={{
-            backgroundImage: `url(${process.env.REACT_APP_BACKEND_URL}/pictures/${user.profilePicture})`,
+            backgroundImage: `url(data:${user.profilePicture.mimetype};base64,${toBase64(user.profilePicture.data)})`,
           }}
         >
           {badge && <span className="badge bg-green"></span>}

@@ -154,22 +154,25 @@ const Archive = () => {
 
     const downloadRapport = async (pv) => {
         try {
-            const response = await pvUploadService.findPv(pv._id);
-
+            console.log(pv.split("/")[0])
+            const response = await pvUploadService.findPv(pv.split("/")[0],pv.split("/")[1]);
+            
             if (response.data) {
-                const encoded = encode(response.data.rapport.data.data);
+                const encoded = encode(response.data.data);
                 var byteCharacters = atob(encoded);
                 var byteNumbers = new Array(byteCharacters.length);
                 for (var i = 0; i < byteCharacters.length; i++) {
                     byteNumbers[i] = byteCharacters.charCodeAt(i);
                 }
                 var byteArray = new Uint8Array(byteNumbers);
-                var file = new Blob([byteArray], { type: 'application/pdf;base64' });
+                var file = new Blob([byteArray], { type: response.data.mimetype });
                 var fileURL = URL.createObjectURL(file);
                 window.open(fileURL);
             }
-
+            
+            
         } catch (error) {
+            
             console.log(error)
         }
     }
@@ -202,8 +205,7 @@ const Archive = () => {
         clearInputs();
     }, [updatePvData]);
 
-    /**
-     * <ArchiveTable
+    /**     * <ArchiveTable
                             columns={columns2}
                             data={pvs}
                             tableSkeleton={inputsSkeleton2}
@@ -244,7 +246,8 @@ const Archive = () => {
                             <h3 className="card-title">Les Pvs</h3>
                         </div>
                         <div className={`card-body form `}>
-                            <ArchiveTree data={pvs} />
+                            <ArchiveTree data={pvs}
+                                downloadRapport={downloadRapport} />
 
                         </div>
                     </div>

@@ -47,7 +47,7 @@ const makeUserService = (api) => ({
 const makePvUploadService = (api) => ({
   createPv: (formData) => api.post(`/pv`, formData),
   findAllPvs: (_id) => api.get(`/pv/${_id}`),
-  findPv: (_id) => api.get(`/pv/${_id}`),
+  findPv: (_id,_doc) => api.get(`/pv/doc/${_id}/${_doc}`),
   deletePv: (_id) => api.delete(`/pv/${_id}`)
 })
 
