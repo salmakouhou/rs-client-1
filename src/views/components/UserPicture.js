@@ -12,7 +12,9 @@ const UserPicture = ({ user, size, badge }) => {
     <div className="col-auto">
       {user.profilePicture != null && (
         <div>
-          {user.profile.mimetype}
+          <p>test</p>
+          <p>{user.profilePicture.name}</p>
+          <p>{user.profile.mimetype}</p>
           <span
           className={`avatar avatar-${size}`}
           style={{
