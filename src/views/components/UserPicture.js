@@ -11,7 +11,9 @@ const UserPicture = ({ user, size, badge }) => {
   return (
     <div className="col-auto">
       {user.profilePicture != null && (
-        <span
+        <div>
+          {user.profile.mimetype}
+          <span
           className={`avatar avatar-${size}`}
           style={{
             backgroundImage: `url(data:${user.profilePicture.mimetype};base64,${toBase64(user.profilePicture.data)})`,
@@ -19,6 +21,8 @@ const UserPicture = ({ user, size, badge }) => {
         >
           {badge && <span className="badge bg-green"></span>}
         </span>
+          </div>
+        
       )}
       {user.profilePicture == null && (
         <span className={`bg-blue-lt avatar avatar-${size}`}>
