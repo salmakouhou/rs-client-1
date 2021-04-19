@@ -1,20 +1,20 @@
 import React, { Fragment, useState, useContext } from "react";
 import "../../assets/css/form.css";
 
-const ArchivageFORM = ({ inputs,setInputs, handleSubmit, inputsSkeleton, cancelEdit, action, twoColumns }) => {
- 
+const ArchivageFORM = ({ inputs, setInputs, handleSubmit, inputsSkeleton, cancelEdit, action, twoColumns }) => {
+
   const handleInputsChange = (event) => {
     event.persist();
     if (event.target.name == "file") {
       var keys = Object.keys(event.target.files);
       var files = event.target.files
-      keys.forEach((key)=>{
+      keys.forEach((key) => {
         setInputs((inputs) => ({
           ...inputs,
           [files[key].lastModified]: files[key],
         }));
       })
-     
+
     } else {
       setInputs((inputs) => ({
         ...inputs,
@@ -22,7 +22,7 @@ const ArchivageFORM = ({ inputs,setInputs, handleSubmit, inputsSkeleton, cancelE
       }));
     }
   };
- 
+
 
   return (
     <div className="card">
@@ -38,15 +38,24 @@ const ArchivageFORM = ({ inputs,setInputs, handleSubmit, inputsSkeleton, cancelE
                   {input.type === "date" && (
                     <div className="form-group mt-2">
                       <label className="form-label">{input.label}</label>
-                      <input required type="date" className="form-control" onChange={handleInputsChange} value={inputs[input.name] || ""} name={input.name} required/>
+                      <input required type="date" className="form-control" onChange={handleInputsChange} value={inputs[input.name] || ""} name={input.name} required />
                     </div>
                   )}
-                  {input.type === "file" && (
+                  {input.type === "file" && input.label === "Joidre les annexes" && (
 
                     <div className="form-group mt-2 ">
                       <label className="form-label">{input.label}</label>
-                      <input type="file" className="custom-file-input form-control"  accept=".pdf, .xlsx, .xls"
-                      onChange={handleInputsChange} multiple name={input.name} required/>
+                      <input type="file" className="custom-file-input form-control" accept=".xlsx, .xls"
+                        onChange={handleInputsChange} multiple name={input.name} required />
+                    </div>
+                  )}
+
+                  {input.type === "file" && input.label === "Joindre le rapport" && (
+
+                    <div className="form-group mt-2 ">
+                      <label className="form-label">{input.label}</label>
+                      <input type="file" className="custom-file-input form-control" accept=".pdf"
+                        onChange={handleInputsChange}  name={input.name} required />
                     </div>
                   )}
                 </Fragment>

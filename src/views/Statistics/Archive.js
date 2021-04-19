@@ -17,18 +17,14 @@ const Archive = () => {
     const [inputs, setInputs] = useState({});
     const [action, setAction] = useState("ADDING");
 
-    const columns = ["Date du PV", "Joindre les fichiers"];
+    const columns = ["Date du PV", "Joindre le rapport", "Joidre les annexes"];
     const inputsSkeleton = [
         { name: "date", label: columns[0], type: "date" },
         { name: "file", label: columns[1], type: "file" },
+        { name: "file", label: columns[2], type: "file" },
     ];
 
-    const columns2 = ["date", "rapport", "annexe"];
-    const inputsSkeleton2 = [
-        { name: "date", label: columns2[0], type: "input" },
-        { name: "rapport", label: columns2[1], type: "input" },
-        { name: "annexe", label: columns2[2], type: "input" },
-    ];
+
 
 
 
@@ -69,10 +65,11 @@ const Archive = () => {
                         var keys = Object.keys(inputs);
                         keys.forEach((key) => {
                             formData.append(key, inputs[key])
+                            console.log(key + " ====>")
+                            console.log(inputs[key])
                         })
 
                         formData.append('laboratory_id', laboratoryId);
-
                         const response = await pvUploadService.createPv(formData);
 
                         swal("Le procès verbale à été ajouter avec succès", {
@@ -97,8 +94,9 @@ const Archive = () => {
 
     };
 
-    const deletePv = async (pv) => {
-        try {
+    const deletePv = async (_id) => {
+        
+       try {
 
             swal({
                 title: "Confirmation",
@@ -108,7 +106,7 @@ const Archive = () => {
                 dangerMode: true,
             }).then(async (willDelete) => {
                 if (willDelete) {
-                    const response = await pvUploadService.deletePv(pv._id);
+                    const response = await pvUploadService.deletePv(_id);
                     if (response.data) updatePvData();
                     else throw Error();
                     swal("Le procès verbale à été supprimer avec succès", {
@@ -123,40 +121,13 @@ const Archive = () => {
         }
     }
 
-    const downloadAnnexe = async (pv) => {
-        try {
-            const response = await pvUploadService.findPv(pv._id);
-            if (response.data) {
-                const encoded = encode(response.data.annexe.data.data);
-                const byteCharacters = atob(encoded);
-                const byteArrays = [];
-                const sliceSize = 512;
-                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                    const slice = byteCharacters.slice(offset, offset + sliceSize);
-
-                    const byteNumbers = new Array(slice.length);
-                    for (let i = 0; i < slice.length; i++) {
-                        byteNumbers[i] = slice.charCodeAt(i);
-                    }
-
-                    const byteArray = new Uint8Array(byteNumbers);
-                    byteArrays.push(byteArray);
-                }
-                const blob = new Blob(byteArrays, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                const fileURL = URL.createObjectURL(blob);
-                window.open(fileURL)
-            }
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    
 
     const downloadRapport = async (pv) => {
         try {
             console.log(pv.split("/")[0])
-            const response = await pvUploadService.findPv(pv.split("/")[0],pv.split("/")[1]);
-            
+            const response = await pvUploadService.findPv(pv.split("/")[0], pv.split("/")[1]);
+
             if (response.data) {
                 const encoded = encode(response.data.data);
                 var byteCharacters = atob(encoded);
@@ -169,10 +140,10 @@ const Archive = () => {
                 var fileURL = URL.createObjectURL(file);
                 window.open(fileURL);
             }
-            
-            
+
+
         } catch (error) {
-            
+
             console.log(error)
         }
     }
@@ -247,7 +218,8 @@ const Archive = () => {
                         </div>
                         <div className={`card-body form `}>
                             <ArchiveTree data={pvs}
-                                downloadRapport={downloadRapport} />
+                                downloadRapport={downloadRapport}
+                                deletePv={deletePv} />
 
                         </div>
                     </div>

@@ -2,7 +2,7 @@ import React, { Fragment, useEffect } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ReportTable from "../Statistics/ReportTable";
 
-const BudgetForm = ({
+const LabReportsForm = ({
   inputs,
   setInputs,
   inputsSkeleton,
@@ -11,7 +11,7 @@ const BudgetForm = ({
   action,
   title,
   willPrint,
-  teamPublications,
+  labPublications,
   loading
 }) => {
 
@@ -111,7 +111,7 @@ const BudgetForm = ({
           {willPrint &&
             <Fragment>
               {(loading ? <button className="btn  btn-sm m-1  btn-outline-primary disabled" >Imprimer le rapport</button> :
-                <PDFDownloadLink className="btn  btn-sm m-1  btn-primary text-white" document={<ReportTable teamPublications={teamPublications} isLab={false} team={inputs.team} year={inputs.year.toString()} />} fileName={"Rapport"}>
+                <PDFDownloadLink className="btn  btn-sm m-1  btn-primary text-white" document={<ReportTable teamPublications={labPublications} team={inputs.laboratoire} year={inputs.year.toString()} isLab={true}/>} fileName={inputs.laboratoire.concat(" "+inputs.year.toString())}>
                   Imprimer le rapport
              </PDFDownloadLink>)}
 
@@ -123,4 +123,4 @@ const BudgetForm = ({
   );
 };
 
-export default BudgetForm;
+export default LabReportsForm;

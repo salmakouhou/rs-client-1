@@ -133,6 +133,7 @@ const PhdPage = () => {
     try {
       const response = await phdStudentService.findStudentsOfUser();
       const { students } = response.data;
+      console.log(response.data)
       if (response.data.length !== 0) {
         const filteredPhdStudents = students.map((st) => ({
           ...st,

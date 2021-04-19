@@ -44,6 +44,7 @@ import LaboratoryBudget from "../views/ManagingEntities/LaboratoryBudget";
 import EstablishmentBudget from "../views/ManagingEntities/EstablishmentBudget";
 import AddBudget from "../views/components/AddBudget";
 import Report from "../views/Statistics/Report";
+import LabReports from "../views/Statistics/LabReports";
 
 
 
@@ -252,19 +253,27 @@ const reportPath = {
   icon: TeamIcon,
   routes: [
     {
-      title: "Rapport",
-      path: "/Rapport",
+      title: "Publications par équipe",
+      path: "/RapportTeam",
       component: Report,
       roles: ["LABORATORY_HEAD"],
       inMenu: true,
     },
     {
-      title: "PV",
+      title: "Publications par laboratoire",
+      path: "/RapportLab",
+      component: LabReports,
+      roles: ["LABORATORY_HEAD"],
+      inMenu: true,
+    },
+    {
+      title: "PV des réunions",
       path: "/pv",
       component: Archive,
       roles: ["LABORATORY_HEAD"],
       inMenu: true,
     },
+    
     {
       title: "Consultation des PVs",
       path: "/pvCons",

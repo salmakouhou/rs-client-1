@@ -8,12 +8,13 @@ import "c3/c3.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ReportTable from "./ReportTable";
 import BudgetForm from "../components/BudgetForm";
+import LabReportsForm from "../components/LabReportsForm";
 
 const Report = () => {
   const [researchersStatistics, setResearchersStatistics] = useState([]);
   const [teamPublications, setTeamPublications] = useState([]);
   const [loading, setLoading] = useState(false);
-  const title = "Rapport par annéee"
+  const title = "Rapport par équipe"
 
   const [inputs, setInputs] = useState({
     year: 2019,
@@ -28,10 +29,9 @@ const Report = () => {
   const [options, setOptions] = useState([]);
   const willPrint = true;
   const { user, ApiServices } = useContext(AppContext);
-  const { statisticsService, userService } = ApiServices;
+  const { statisticsService, userService,laboratoryService } = ApiServices;
   const columns = ["Equipe", "Année"];
   const inputsSkeleton = [
-
     {
       name: "team",
       label: columns[0],
@@ -46,19 +46,21 @@ const Report = () => {
     },
   ];
 
+
   const updateFilteringOptionsData = useCallback(async () => {
     try {
-
       let response = await userService.getFilteringOptions(user._id);
+    
       if (response.data) {
         setFilteringOptions(response.data);
-
       }
       else throw Error();
     } catch (error) {
-
+      console.log(error)
     }
   }, [user._id]);
+
+
 
   const updateFollowedUsersData = useCallback(async () => {
     try {
@@ -67,7 +69,7 @@ const Report = () => {
       if (response.data) setResearchersStatistics(response.data);
       else throw Error();
     } catch (error) {
-
+      console.log(error)
     }
   }, [filter]);
 
@@ -83,7 +85,7 @@ const Report = () => {
         setTeamPublications(response.data);
         setLoading(false);
       } else throw Error();
-      
+
     } catch (error) {
 
     }
@@ -101,7 +103,6 @@ const Report = () => {
   useEffect(() => {
     if (filteringOptions != null)
       setOptions(filteringOptions.map(option => option.abbreviation))
-
   }, [filteringOptions])
 
 
@@ -122,28 +123,38 @@ const Report = () => {
 
 
   return (
-    <div className="container">
-      <PageHeader
-        title="Imprimer rapport"
+    <Fragment>
+      <div className="page-header">
+        <PageHeader
+          title="Imprimer rapport"
 
-      />
-
-      <BudgetForm
-        {...{
-          inputs,
-          setInputs,
-          inputsSkeleton,
-          title,
-          willPrint,
-          teamPublications,
-          loading
-        }}
-      />
+        />
+      </div>
 
 
+      <div className="row row-cards row-deck">
+        <div className="col-md-6">
+          <BudgetForm
+            {...{
+              inputs,
+              setInputs,
+              inputsSkeleton,
+              title,
+              willPrint,
+              teamPublications,
+              loading
+            }}
+          />
+        </div>
+        
+      </div>
 
 
-    </div>
+
+
+
+
+    </Fragment>
 
 
   );

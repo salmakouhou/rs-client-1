@@ -71,8 +71,6 @@ const HomePage = () => {
 
         setPubs(occ.size)
 
-
-
         var keys = Array.from(pubData.keys()).sort();
         var data = new Array();
         keys.forEach((key) => {

@@ -49,24 +49,26 @@ const styles = StyleSheet.create({
 });
 
 // Create Document Component
-const ReportTable = ({teamPublications, team, year}) => {
+const ReportTable = ({ teamPublications, team, year,isLab }) => {
 
-        const seen = new Set();
-    teamPublications = teamPublications.filter(el => {
-      const duplicate = seen.has(el.title);
-      seen.add(el.title);
-      return !duplicate;
-    });
-    console.log(teamPublications);
- 
+  const seen = new Set();
+  teamPublications = teamPublications.filter(el => {
+    const duplicate = seen.has(el.title);
+    seen.add(el.title);
+    return !duplicate;
+  });
+
   return (
-   
-    <Document
-   
-    
-  >
-    <Page orientation="landscape" style={styles.body}>
-      <Text style={styles.subtitle}>{"Publications de l'équipe " + team+ " pendant l'année "+ year}</Text>
+
+    <Document>
+      <Page orientation="landscape" style={styles.body}>
+        {isLab&&
+         <Text style={styles.subtitle}>{"Publications du laboratoire " + team + " pendant l'année " + year}</Text>
+        }
+        {!isLab&&
+         <Text style={styles.subtitle}>{"Publications de l'équipe " + team + " pendant l'année " + year}</Text>
+        }
+       
         <View style={styles.table} key={teamPublications}>
           {/* TableHeader */}
           <View style={styles.tableRow}>
@@ -114,9 +116,9 @@ const ReportTable = ({teamPublications, team, year}) => {
             </View>
           ))}
         </View>
-     </Page>
-     </Document>
-    
+      </Page>
+    </Document>
+
   );
 };
 
