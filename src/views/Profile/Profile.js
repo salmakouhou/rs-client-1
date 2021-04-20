@@ -55,6 +55,7 @@ const Profile = () => {
                       }}
                     />
                     <Publications
+                      getProfile={getProfile}
                       author={correspondingFollowedUser}
                       setAuthor={setCorrespondingFollowedUser}
                     />

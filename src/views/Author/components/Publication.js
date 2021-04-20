@@ -2,17 +2,19 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
 import { AppContext } from "../../../context/AppContext";
 import Loader from "../../components/Loader";
+import swal from 'sweetalert';
 
 const Publication = ({
   author,
   publication,
   updatePublication,
   index,
+  getProfile,
   platform,
 }) => {
-  const { ApiServices, alertService } = useContext(AppContext);
+  const { ApiServices,user, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
-  const { scraperService } = ApiServices;
+  const { scraperService,userService } = ApiServices;
 
   const [noResultFound, setNoResultFound] = useState(false);
   const [isFetched, setIsFetched] = useState(false);
@@ -88,6 +90,53 @@ const Publication = ({
     };
   }, []);
 
+
+  const deletePub = async (e) =>{
+    var idPub=e.target.id;
+    console.log(user._id);
+    swal({
+      title: "Confirmation",
+      text: "Etes vous sur de vouloir supprimer cette publication ?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
+    })
+    .then(async (willAdd) => {
+      if (willAdd) {
+        const userP=user._id;
+
+        try {
+          const response =  userService.deletePub({
+            idAuthor:user._id,
+            idPub:idPub, 
+            
+          });
+          getProfile();
+          swal("La publication est supprimée", {
+            icon: "success",
+          });
+    
+          if (response.data) {
+            pushAlert({
+              type: "success",
+              message: "Le mot de passe a été mis à jour",
+            });
+           
+          } else throw Error();
+        } catch (e) {
+          pushAlert({
+            message: "Incapable de mettre à jour la photo de profil",
+          });
+        }
+       
+      } else {
+        swal("Abortion du transaction!");
+      }
+    });
+    
+  }
+
+
   const fetchedButton = (
     <button
       className="btn  btn-sm m-3 btn-outline-secondary "
@@ -153,6 +202,14 @@ const Publication = ({
       <td className="text-center">
         {noResultFound && " "}
         {!isFetched && !publication.searchedFor && !isLoading && fetchedButton}
+      </td>
+      <td>
+      <button id={publication._id}
+      className="btn  btn-sm m-3 btn-outline-danger "
+      onClick= {deletePub}
+    >
+      supprimer
+    </button>
       </td>
     </tr>
   );

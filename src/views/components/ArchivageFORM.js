@@ -45,7 +45,7 @@ const ArchivageFORM = ({ inputs, setInputs, handleSubmit, inputsSkeleton, cancel
 
                     <div className="form-group mt-2 ">
                       <label className="form-label">{input.label}</label>
-                      <input type="file" className="custom-file-input form-control" accept=".xlsx, .xls"
+                      <input type="file" className="" accept=".xlsx, .xls"
                         onChange={handleInputsChange} multiple name={input.name} required />
                     </div>
                   )}
@@ -54,7 +54,7 @@ const ArchivageFORM = ({ inputs, setInputs, handleSubmit, inputsSkeleton, cancel
 
                     <div className="form-group mt-2 ">
                       <label className="form-label">{input.label}</label>
-                      <input type="file" className="custom-file-input form-control" accept=".pdf"
+                      <input type="file" className="" accept=".pdf"
                         onChange={handleInputsChange}  name={input.name} required />
                     </div>
                   )}
