@@ -6,6 +6,7 @@ import { AppContext } from "../../context/AppContext";
 import "bootstrap/dist/js/bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
 
+
 const MenuBar = withRouter(({ history, location, ...props }) => {
   const { user } = useContext(AppContext);
 
