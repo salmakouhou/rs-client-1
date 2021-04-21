@@ -35,7 +35,7 @@ const Archive = () => {
             const response = await pvUploadService.findAllPvs(connectedUser.laboratoriesHeaded[0]._id);
             if (response.data) {
                 setPvs(
-                    response.data.map((pv) => ({
+                    response.data.sort(compare).map((pv) => ({
                         ...pv,
                         pv: pv,
                     }))
@@ -48,6 +48,15 @@ const Archive = () => {
         }
     }, []);
 
+    const  compare=( a, b )=> {
+        if ( a.date < b.date ){
+          return 1;
+        }
+        if ( a.date > b.date ){
+          return -1;
+        }
+        return 0;
+      }
 
     const addPv = async () => {
         try {

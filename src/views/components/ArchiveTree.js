@@ -61,7 +61,7 @@ const ArchiveTree = ({ data, downloadRapport, deletePv }) => {
                 defaultExpanded={['1']}
                 defaultCollapseIcon={<MinusSquare />}
                 defaultExpandIcon={<PlusSquare />}
-                defaultEndIcon={<CloseSquare />}
+                
 
 
                 onNodeSelect={onNodeSelect}>
@@ -79,7 +79,7 @@ const ArchiveTree = ({ data, downloadRapport, deletePv }) => {
                         </div>
 
                     } >
-                        <TreeItem nodeId={"rapports".concat(indexP)} label={"Rapport"}>
+                        <TreeItem nodeId={"rapports".concat(indexP)} label={"Procès-verbal"}>
                             {dataObjectRow.rapport.map((objectRow, indexC) => (
                                 <div>
                                     <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={objectRow.name} />

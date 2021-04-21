@@ -3,6 +3,8 @@ import { withRouter, Link } from "react-router-dom";
 
 import { getMenuForRole } from "./Menus";
 import { AppContext } from "../../context/AppContext";
+import "bootstrap/dist/js/bootstrap";
+import "bootstrap/dist/css/bootstrap.css";
 
 const MenuBar = withRouter(({ history, location, ...props }) => {
   const { user } = useContext(AppContext);
@@ -59,7 +61,7 @@ const NotDropdown = ({ menu, location }) => (
 const Dropdown = ({ menu, location }) => (
   <Fragment>
     <a
-      className={`nav-link dropdown-toggle ${
+      className={`nav-link dropdown-toggle-bs ${
         menu.subMenus
           .map((subMenu) => subMenu.path)
           .indexOf(location.pathname) !== -1

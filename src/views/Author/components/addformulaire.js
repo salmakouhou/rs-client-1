@@ -3,19 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import React, { Fragment, useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import AddIcon from '@material-ui/icons/Add';
-
 
 
 const useStyles = makeStyles(theme => ({
@@ -29,16 +17,12 @@ const useStyles = makeStyles(theme => ({
   },
   list: {
     alignItems: "center",
-
-
   },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
-
 
 
 function AddFormulaire(props) {
@@ -60,11 +44,6 @@ function AddFormulaire(props) {
   };
 
   
-
-
-
-
-  const classes = useStyles();
   return (
     show && (
       <Modal
@@ -167,10 +146,6 @@ function AddFormulaire(props) {
         
         </form>
       </Modal>
-
-
-
-
 
     )
   )

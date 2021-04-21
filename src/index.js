@@ -20,6 +20,7 @@ import { routes } from "./routes/routes";
 import "./assets/css/datatables.css";
 import "./assets/css/tabler.css";
 
+
 import "popper.js/dist/popper";
 import "bootstrap/dist/js/bootstrap";
 
