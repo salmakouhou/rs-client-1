@@ -12,6 +12,7 @@ import { NotificationIcon } from "../components/icons";
 import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 import Loader from "../components/Loader";
+import { Toast } from "react-bootstrap";
 
 const Notifications = () => {
   const { user, ApiServices, alertService } = useContext(AppContext);
@@ -208,14 +209,7 @@ const Notification = ({ notification, markAsRead }) => {
   const { alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
   return (
-    <div
-      className="toast show"
-      roles="alert"
-      aria-live="assertive"
-      aria-atomic="true"
-      data-autohide="false"
-      data-toggle="toast"
-    >
+    <div className="card">
       <Link
         onClick={(e) => {
           e.preventDefault();
@@ -228,7 +222,7 @@ const Notification = ({ notification, markAsRead }) => {
           markAsRead();
         }}
       >
-        <div className="toast-header">
+        <Toast.Header>
           {notification.profilePicture && (
             <span
               className="avatar avatar-sm mr-2"
@@ -238,11 +232,11 @@ const Notification = ({ notification, markAsRead }) => {
             ></span>
           )}
 
-          <strong className="mr-auto">{notification.fullName}</strong>
-        </div>
-        <div className="toast-body">
+          <strong className="mr-auto " style={{fontSize:"13px"}}>{notification.fullName}</strong>
+        </Toast.Header>
+        <Toast.Body style={{fontSize:"12px"}}>
           {`${notification.fullName} a publié une nouvelle publication intitulé : "${notification.publication}"`}
-        </div>
+        </Toast.Body>
       </Link>
     </div>
   );

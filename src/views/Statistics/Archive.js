@@ -4,7 +4,6 @@ import PageHeader from "../components/PageHeader";
 import ArchivageFORM from '../components/ArchivageFORM';
 import { AppContext } from "../../context/AppContext";
 import { encode, decode } from 'uint8-to-base64';
-import ArchiveTable from "../components/ArchiveTable";
 import swal from 'sweetalert';
 import ArchiveTree from "../components/ArchiveTree";
 
@@ -25,12 +24,8 @@ const Archive = () => {
     ];
 
 
-
-
-
     const updatePvData = useCallback(async () => {
         const connectedUser = JSON.parse(localStorage.getItem("user"));
-
         try {
             const response = await pvUploadService.findAllPvs(connectedUser.laboratoriesHeaded[0]._id);
             if (response.data) {
@@ -48,15 +43,15 @@ const Archive = () => {
         }
     }, []);
 
-    const  compare=( a, b )=> {
-        if ( a.date < b.date ){
-          return 1;
+    const compare = (a, b) => {
+        if (a.date < b.date) {
+            return 1;
         }
-        if ( a.date > b.date ){
-          return -1;
+        if (a.date > b.date) {
+            return -1;
         }
         return 0;
-      }
+    }
 
     const addPv = async () => {
         try {
@@ -93,7 +88,7 @@ const Archive = () => {
 
                     }
                 } else {
-                    swal("Abortion du transaction!");
+                    swal("Annulation du transaction!", "", "info");
                 }
             });
         } catch (error) {
@@ -104,8 +99,8 @@ const Archive = () => {
     };
 
     const deletePv = async (_id) => {
-        
-       try {
+
+        try {
 
             swal({
                 title: "Confirmation",
@@ -130,11 +125,10 @@ const Archive = () => {
         }
     }
 
-    
+
 
     const downloadRapport = async (pv) => {
         try {
-            console.log(pv.split("/")[0])
             const response = await pvUploadService.findPv(pv.split("/")[0], pv.split("/")[1]);
 
             if (response.data) {
@@ -154,6 +148,45 @@ const Archive = () => {
         } catch (error) {
 
             console.log(error)
+        }
+    }
+
+    const removeElement = async (type, pv) => {
+        try {
+            swal({
+                title: "Confirmation",
+                text: "Etes vous sur de vouloir supprimer cet procès verbale?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then(async (willDelete) => {
+                if (willDelete) {
+                    var racine = pv.split("/")[0];
+                    var element = pv.split("/")[1];
+                    const response = await pvUploadService.removeElement(type, racine, element);
+                    if (response.data) updatePvData();
+                    else throw Error();
+                    swal("Le procès verbale à été supprimer avec succès", {
+                        icon: "success",
+                    });
+                } else {
+                    swal("Abortion du transaction!");
+                }
+            });
+        } catch (error) {
+
+            console.log(error)
+        }
+    }
+
+    const dragDrop = async (type, racineSrc, elementSrc, racineDest) => {
+        try {
+            console.log(type, racineSrc, elementSrc, racineDest)
+            const response = await pvUploadService.dragDrop(type, racineSrc, elementSrc, racineDest);
+            if (response.data) updatePvData();
+            else throw Error();
+        } catch (error) {
+
         }
     }
 
@@ -185,19 +218,6 @@ const Archive = () => {
         clearInputs();
     }, [updatePvData]);
 
-    /**     * <ArchiveTable
-                            columns={columns2}
-                            data={pvs}
-                            tableSkeleton={inputsSkeleton2}
-                            actions={[
-                                { name: "Rapport", function: downloadRapport, style: "danger" },
-                                { name: "Annexe", function: downloadAnnexe, style: "success" },
-                                { name: "Supprimer", function: deletePv, style: "danger" },
-    
-                            ]}
-                        />
-     */
-
 
     return (
         <Fragment>
@@ -227,9 +247,11 @@ const Archive = () => {
                         </div>
                         <div className={`card-body form `}>
                             <ArchiveTree data={pvs}
+                                dragDrop={dragDrop}
+                                removeElement={removeElement}
                                 downloadRapport={downloadRapport}
-                                deletePv={deletePv} />
-
+                                deletePv={deletePv}
+                                />
                         </div>
                     </div>
                 </div>

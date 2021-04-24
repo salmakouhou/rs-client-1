@@ -16,12 +16,14 @@ import ProfileHeader from "./components/ProfileHeader";
 const Profile = () => {
   const { id } = useParams();
   const [profileUser, setProfileUser] = useState(null);
+  const [author, setAuthor] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [correspondingFollowedUser, setCorrespondingFollowedUser] = useState(
     null
   );
   const { ApiServices, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
-  const { userService } = ApiServices;
+  const { userService,scraperService } = ApiServices;
 
   useEffect(() => {
     getProfile();
@@ -34,6 +36,15 @@ const Profile = () => {
         setProfileUser(response.data);
         setCorrespondingFollowedUser(response.data.correspondingFollowedUser);
       } else throw Error();
+      console.log(response.data.correspondingFollowedUser)
+
+      const responseScrap = await scraperService.getAuthorData("scopus", response.data.correspondingFollowedUser.authorId);
+      if (responseScrap.data.author) {
+        setAuthor(responseScrap.data.author);
+        setLoading(false)
+      } 
+
+
     } catch (error) {
       pushAlert({ message: "Incapable d'obtenir les données de profil" });
     }
@@ -62,10 +73,11 @@ const Profile = () => {
                   </Fragment>
                 )}
               </div>
-              <div className="col-md-4">
-                <AuthorCitations author={correspondingFollowedUser} />
+
+              {!loading &&(<div className="col-md-4">
+                <AuthorCitations  author={author} />
                 <Coauthors author={correspondingFollowedUser} />
-              </div>
+              </div>)}
             </div>
           )}
         </Fragment>

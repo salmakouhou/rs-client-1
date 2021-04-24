@@ -51,7 +51,7 @@ const BudgetForm = ({
   }, [inputs, inputsSkeleton, setInputs]);
 
   return (
-    <div className="card col-md-12">
+    <div className="card ">
       <form onSubmit={handleSubmit}>
         <div className="card-header">
           <h3 className="card-title">
