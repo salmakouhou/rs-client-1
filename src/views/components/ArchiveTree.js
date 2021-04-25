@@ -5,14 +5,15 @@ import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { IconButton, Typography } from "@material-ui/core";
-import DeleteIcon from '@material-ui/icons/Delete';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import DeleteIcon from '@material-ui/icons/Delete'
+import HighlightOffOutlinedIcon from '@material-ui/icons/HighlightOffOutlined';
 import swal from "sweetalert";
 import { AppContext } from "../../context/AppContext";
+import green from '@material-ui/core/colors/green';
 
 
-
-const ArchiveTree = ({ data, downloadRapport, deletePv, removeElement, dragDrop }) => {
+const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement }) => {
 
     const [test, setTest] = useState([]);
     const { user, ApiServices } = useContext(AppContext);
@@ -55,52 +56,81 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, removeElement, dragDrop 
         );
     }
 
-    const drag = (event) => {
-        var racine = event.target.id.split("/")[0];
-        var element = event.target.id.split("/")[1];
-        var type = event.target.id.split("/")[2];
-        console.log(type)
-        event.dataTransfer.setData("racine", racine);
-        event.dataTransfer.setData("element", element);
-        event.dataTransfer.setData("type", type);
-    }
 
-    const dragOver = (event) => {
-        event.preventDefault();
-    }
+    const dropHandler = (ev) => {
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+        var racineDestination = ev.currentTarget.id.split("/")[0];
+        var targetCategory = ev.currentTarget.id.split("/")[1];
 
-    const drop = async (event) => {
-        var racine = event.dataTransfer.getData("racine");
-        var element = event.dataTransfer.getData("element");
-        var type = event.dataTransfer.getData("type");
-        console.log(type)
 
-        var destination = event.currentTarget.id;
-        if (destination.split("/")[1] == type) {
-            var racineDest = destination.split("/")[0]
-            if (type == "rapport") {
-                const response = await pvUploadService.findPvById(destination.split("/")[0])
-                if (response.data.rapport.length == 0) {
-                    dragDrop(type, racine, element, racineDest);
-
-                } else {
-                    swal("Plusieurs rapports!", "Vous ne pouvez avoir qu'un seul rapport.", "info");
-
+        if (ev.dataTransfer.items) {
+            if (targetCategory == "rapport") {
+                if (ev.dataTransfer.items.length > 1) {
+                    swal("Plusieurs rapports!", "Vous avez choisi plusieurs rapports.", "info");
+                    return;
                 }
+
+                // Use DataTransferItemList interface to access the file(s)
+                for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+                    // If dropped items aren't files, reject them
+                    if (ev.dataTransfer.items[i].kind === 'file') {
+                        var file = ev.dataTransfer.items[i].getAsFile();
+                        if (file.type == "application/pdf") {
+
+                            checkAvailability(racineDestination).then(function (response) {
+                                if (response.rapport.length == 0) {
+                                    pushFile(targetCategory, racineDestination, file)
+                                } else {
+                                    swal("Plusieurs rapports!", "Vous ne pouvez avoir qu'un seul rapport.", "info");
+                                }
+                            })
+
+                        } else {
+                            swal("il ne s'agit pas d'un PDF!", "Vous devez choisir un fichier en format PDF.", "info");
+                            return;
+                        }
+
+                    }
+                }
+
             } else {
-                dragDrop(type, racine, element, racineDest);
+                // Use DataTransferItemList interface to access the file(s)
+                for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+                    // If dropped items aren't files, reject them
+                    if (ev.dataTransfer.items[i].kind === 'file') {
+                        var file = ev.dataTransfer.items[i].getAsFile();
+                        if (file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+                            file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+                            file.type == "application/vnd.ms-excel") {
+                            pushFile(targetCategory, racineDestination, file)
+                        } else {
+                            swal("il ne s'agit pas d'une format valable!", "Vous devez choisir un fichier en format valide.", "info");
+                            return;
+                        }
 
+                    }
+                }
             }
-        } else {
-            swal("Mauvaise destination!", "Vous devez respecter les  mêmes catégories!", "info");
-
         }
-
     }
+
+    const checkAvailability = async (racineDestination) => {
+        const response = await pvUploadService.findPvById(racineDestination)
+        return response.data;
+    }
+
+    const dragOverHandler = (ev) => {
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+    }
+
+
 
     return (
 
         <div>
+
             {user.roles.includes("RESEARCHER") && !user.roles.includes("LABORATORY_HEAD") && (<div>
                 <TreeView
 
@@ -118,34 +148,27 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, removeElement, dragDrop 
                         } >
                             <TreeItem nodeId={"rapports".concat(indexP)} label={"Procès-verbal"}>
                                 {dataObjectRow.rapport.map((objectRow, indexC) => (
-                                    <div
-                                        key={indexC}
 
-                                    >
-                                        <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={
-                                            <div className="d-flex">
-                                                <div className="mr-auto p-2">{objectRow.name}</div>
-                                                <div className="p-2">
-                                                    <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
-                                                </div>
+                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={
+                                        <div className="d-flex">
+                                            <div className="mr-auto p-2">{objectRow.name}</div>
+                                            <div className="p-2">
+                                                <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
                                             </div>
-                                        } />
-                                    </div>
+                                        </div>
+                                    } />
                                 ))}
                             </TreeItem>
                             <TreeItem nodeId={"annexes".concat(indexP)} label="Annexes">
                                 {dataObjectRow.annexe.map((objectRow, indexC) => (
-                                    <div
 
-                                    >
-                                        <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div class="d-flex">
-                                            <div className="mr-auto p-2">{objectRow.name}</div>
-                                            <div className="p-2">
-                                                <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
+                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div class="d-flex">
+                                        <div className="mr-auto p-2">{objectRow.name}</div>
+                                        <div className="p-2">
+                                            <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
 
-                                            </div>
-                                        </div>} />
-                                    </div>
+                                        </div>
+                                    </div>} />
                                 ))}
                             </TreeItem>
                         </TreeItem>
@@ -159,6 +182,7 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, removeElement, dragDrop 
 
 
             {user.roles.includes("LABORATORY_HEAD") && (<div>
+
                 <TreeView
 
                     defaultCollapseIcon={<MinusSquare />}
@@ -177,42 +201,38 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, removeElement, dragDrop 
                                 </div>
                             </div>
                         } >
-                            <TreeItem onDrop={drop} id={dataObjectRow._id.concat("/rapport")} onDragOver={dragOver} nodeId={"rapports".concat(indexP)} label={"Procès-verbal"}>
+                            <TreeItem onDrop={dropHandler} id={dataObjectRow._id.concat("/rapport")} onDragOver={dragOverHandler} nodeId={"rapports".concat(indexP)} label={"Procès-verbal"}>
                                 {dataObjectRow.rapport.map((objectRow, indexC) => (
-                                    <div
-                                        key={indexC}
-                                        draggable="true"
-                                        id={dataObjectRow._id.concat("/" + objectRow._id).concat("/rapport")}
-                                        onDragStart={drag}
-                                    >
-                                        <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={
-                                            <div className="d-flex">
-                                                <div className="mr-auto p-2">{objectRow.name}</div>
-                                                <div className="p-2">
-                                                    <button onClick={() => { removeElement("rapport", dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-danger">supprimer</button>
-                                                    <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
-                                                </div>
-                                            </div>
-                                        } />
-                                    </div>
-                                ))}
-                            </TreeItem>
-                            <TreeItem onDrop={drop} id={dataObjectRow._id.concat("/annexe")} onDragOver={dragOver} nodeId={"annexes".concat(indexP)} label="Annexes">
-                                {dataObjectRow.annexe.map((objectRow, indexC) => (
-                                    <div
-                                        draggable="true"
-                                        id={dataObjectRow._id.concat("/" + objectRow._id).concat("/annexe")}
-                                        onDragStart={drag}
-                                    >
-                                        <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div class="d-flex">
+
+                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={
+                                        <div className="d-flex">
                                             <div className="mr-auto p-2">{objectRow.name}</div>
                                             <div className="p-2">
-                                                <button onClick={() => { removeElement("annexe", dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-danger">supprimer</button>
-                                                <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
-
+                                                <IconButton onClick={() => { removeElement("rapport", dataObjectRow._id.concat("/" + objectRow._id)) }} size="small" color="secondary" component="span">
+                                                    <HighlightOffOutlinedIcon />
+                                                </IconButton>
+                                                <IconButton onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} size="small" style={{ color: "#4caf50" }} component="span">
+                                                    <GetAppRoundedIcon />
+                                                </IconButton>
                                             </div>
-                                        </div>} />
-                                    </div>
+                                        </div>
+                                    } />
+                                ))}
+                            </TreeItem>
+                            <TreeItem onDrop={dropHandler} id={dataObjectRow._id.concat("/annexe")} onDragOver={dragOverHandler} nodeId={"annexes".concat(indexP)} label="Annexes">
+                                {dataObjectRow.annexe.map((objectRow, indexC) => (
+
+                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div class="d-flex">
+                                        <div className="mr-auto p-2">{objectRow.name}</div>
+                                        <div className="p-2">
+                                            <IconButton onClick={() => { removeElement("annexe", dataObjectRow._id.concat("/" + objectRow._id)) }} size="small" color="secondary" component="span">
+                                                <HighlightOffOutlinedIcon />
+                                            </IconButton>
+                                            <IconButton onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} size="small" style={{ color: "#4caf50" }} component="span">
+                                                <GetAppRoundedIcon />
+                                            </IconButton>
+                                        </div>
+                                    </div>} />
                                 ))}
                             </TreeItem>
                         </TreeItem>

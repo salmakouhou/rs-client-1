@@ -54,8 +54,8 @@ const makePvUploadService = (api) => ({
   findPv: (_id,_doc) => api.get(`/pv/doc/${_id}/${_doc}`),
   deletePv: (_id) => api.delete(`/pv/${_id}`),
   removeElement: (type,racine,element)=>api.post("/pv/removeElement",{type,racine,element}),
-  dragDrop :(type,racineSrc,elementSrc,racineDest)=>api.post("/pv/dragDrop",{type,racineSrc,elementSrc,racineDest}),
-  findPvById :(_id)=>api.get(`/pv/findOne/${_id}`)
+  findPvById :(_id)=>api.get(`/pv/findOne/${_id}`),
+  pushFile :(form)=>api.post("/pv/pushFile",form)
 })
 
 

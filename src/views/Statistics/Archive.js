@@ -132,15 +132,11 @@ const Archive = () => {
             const response = await pvUploadService.findPv(pv.split("/")[0], pv.split("/")[1]);
 
             if (response.data) {
-                const encoded = encode(response.data.data);
-                var byteCharacters = atob(encoded);
-                var byteNumbers = new Array(byteCharacters.length);
-                for (var i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                var byteArray = new Uint8Array(byteNumbers);
-                var file = new Blob([byteArray], { type: response.data.mimetype });
-                var fileURL = URL.createObjectURL(file);
+               
+                const base64Response = await fetch(`data:${response.data.mimetype};base64,${btoa(String.fromCharCode.apply(null, new Uint8Array(response.data.data.data)))}`);
+                const blob = await base64Response.blob();
+                console.log(blob)
+                var fileURL = URL.createObjectURL(blob);
                 window.open(fileURL);
             }
 
@@ -179,17 +175,26 @@ const Archive = () => {
         }
     }
 
-    const dragDrop = async (type, racineSrc, elementSrc, racineDest) => {
+
+
+    const pushFile = async (type, racineDestination, file) => {
         try {
-            console.log(type, racineSrc, elementSrc, racineDest)
-            const response = await pvUploadService.dragDrop(type, racineSrc, elementSrc, racineDest);
-            if (response.data) updatePvData();
+            console.log(type, racineDestination, file)
+            var form = new FormData();
+            form.append("type", type)
+            form.append("racineDestination", racineDestination)
+            form.append("file", file)
+            const response = await pvUploadService.pushFile(form);
+            if (response.data) {
+                updatePvData();
+                swal("L'opération est terminèe!", `Le rapport ${file.name} a été ajouté avec succès`, "success");
+
+            }
             else throw Error();
         } catch (error) {
 
         }
     }
-
 
     const clearInputs = () => {
         setInputs(() => ({
@@ -247,11 +252,11 @@ const Archive = () => {
                         </div>
                         <div className={`card-body form `}>
                             <ArchiveTree data={pvs}
-                                dragDrop={dragDrop}
                                 removeElement={removeElement}
                                 downloadRapport={downloadRapport}
                                 deletePv={deletePv}
-                                />
+                                pushFile={pushFile}
+                            />
                         </div>
                     </div>
                 </div>
