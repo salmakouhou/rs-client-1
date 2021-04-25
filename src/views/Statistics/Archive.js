@@ -3,18 +3,24 @@ import React, { useContext, useEffect, useState, useCallback, Fragment } from "r
 import PageHeader from "../components/PageHeader";
 import ArchivageFORM from '../components/ArchivageFORM';
 import { AppContext } from "../../context/AppContext";
-import { encode, decode } from 'uint8-to-base64';
 import swal from 'sweetalert';
 import ArchiveTree from "../components/ArchiveTree";
+import SyncLoader from "react-spinners/SyncLoader";
+import { css } from "@emotion/core";
 
 
 const Archive = () => {
     const { ApiServices } = useContext(AppContext);
     const { pvUploadService } = ApiServices;
     const [pvs, setPvs] = useState([])
+    let [loading, setLoading] = useState(false);
+    let [color, setColor] = useState("#1e90ff");
+
 
     const [inputs, setInputs] = useState({});
     const [action, setAction] = useState("ADDING");
+
+
 
     const columns = ["Date du PV", "Joindre le rapport", "Joidre les annexes"];
     const inputsSkeleton = [
@@ -25,6 +31,7 @@ const Archive = () => {
 
 
     const updatePvData = useCallback(async () => {
+
         const connectedUser = JSON.parse(localStorage.getItem("user"));
         try {
             const response = await pvUploadService.findAllPvs(connectedUser.laboratoriesHeaded[0]._id);
@@ -64,18 +71,17 @@ const Archive = () => {
             }).then(async (willDelete) => {
                 if (willDelete) {
                     try {
+                        setLoading(true)
                         const laboratoryId = JSON.parse(localStorage.getItem("user")).laboratoriesHeaded[0]._id;
                         const formData = new FormData();
                         var keys = Object.keys(inputs);
                         keys.forEach((key) => {
                             formData.append(key, inputs[key])
-                            console.log(key + " ====>")
-                            console.log(inputs[key])
                         })
 
                         formData.append('laboratory_id', laboratoryId);
                         const response = await pvUploadService.createPv(formData);
-
+                        setLoading(false)
                         swal("Le procès verbale à été ajouter avec succès", {
                             icon: "success",
                         });
@@ -85,7 +91,7 @@ const Archive = () => {
                         }
                         else throw Error();
                     } catch (error) {
-
+                        console.log(error)
                     }
                 } else {
                     swal("Annulation du transaction!", "", "info");
@@ -101,7 +107,6 @@ const Archive = () => {
     const deletePv = async (_id) => {
 
         try {
-
             swal({
                 title: "Confirmation",
                 text: "Etes vous sur de vouloir supprimer cet procès verbale?",
@@ -129,14 +134,15 @@ const Archive = () => {
 
     const downloadRapport = async (pv) => {
         try {
+            setLoading(true)
             const response = await pvUploadService.findPv(pv.split("/")[0], pv.split("/")[1]);
 
             if (response.data) {
-               
+
                 const base64Response = await fetch(`data:${response.data.mimetype};base64,${btoa(String.fromCharCode.apply(null, new Uint8Array(response.data.data.data)))}`);
                 const blob = await base64Response.blob();
-                console.log(blob)
                 var fileURL = URL.createObjectURL(blob);
+                setLoading(false)
                 window.open(fileURL);
             }
 
@@ -179,6 +185,7 @@ const Archive = () => {
 
     const pushFile = async (type, racineDestination, file) => {
         try {
+            setLoading(true)
             console.log(type, racineDestination, file)
             var form = new FormData();
             form.append("type", type)
@@ -186,7 +193,9 @@ const Archive = () => {
             form.append("file", file)
             const response = await pvUploadService.pushFile(form);
             if (response.data) {
+                
                 updatePvData();
+                setLoading(false)
                 swal("L'opération est terminèe!", `Le rapport ${file.name} a été ajouté avec succès`, "success");
 
             }
@@ -226,6 +235,25 @@ const Archive = () => {
 
     return (
         <Fragment>
+
+            <div style={{
+                position: "fixed",
+                zIndex: "999",
+                height: "2em",
+                width: "4em",
+                overflow: "show",
+                margin: "auto",
+                top: "0",
+                left: "0",
+                bottom: "0",
+                right: "0",
+            }}>
+                <SyncLoader color={color} loading={loading} size={15} />
+
+            </div>
+
+
+
             <div className="page-header">
                 <PageHeader
                     title={`Archivage des PVs `}
@@ -260,9 +288,9 @@ const Archive = () => {
                         </div>
                     </div>
                 </div>
-
             </div>
-        </Fragment>
+
+        </Fragment >
     );
 };
 
