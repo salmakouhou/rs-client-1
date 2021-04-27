@@ -18,6 +18,8 @@ const makeUserService = (api) => ({
 
   deletePub:(pub)=>api.post(`/delete-pub`,pub),
 
+  updateCitation:(citation)=>api.post(`/update-citation`,citation),
+
   createUser: (user) => api.post(`/users`, user),
   updateUser: (user) => api.put(`/users`, user),
   findUser: (_id) => api.get(`/users/${_id}`),

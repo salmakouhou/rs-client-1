@@ -3,6 +3,8 @@ import React, { useState, useContext, useEffect, useCallback } from "react";
 import { AppContext } from "../../../context/AppContext";
 import Loader from "../../components/Loader";
 import swal from 'sweetalert';
+import { IconButton, Typography } from "@material-ui/core";
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const Publication = ({
   author,
@@ -92,8 +94,9 @@ const Publication = ({
 
 
   const deletePub = async (e) =>{
-    var idPub=e.target.id;
+    var idPub=e.currentTarget.id;
     console.log(user._id);
+    console.log(idPub)
     swal({
       title: "Confirmation",
       text: "Etes vous sur de vouloir supprimer cette publication ?",
@@ -104,7 +107,7 @@ const Publication = ({
     .then(async (willAdd) => {
       if (willAdd) {
         const userP=user._id;
-
+        
         try {
           const response =  userService.deletePub({
             idAuthor:user._id,
@@ -130,7 +133,7 @@ const Publication = ({
         }
        
       } else {
-        swal("Abortion du transaction!");
+        swal("l'operation est annulée");
       }
     });
     
@@ -204,12 +207,12 @@ const Publication = ({
         {!isFetched && !publication.searchedFor && !isLoading && fetchedButton}
       </td>
       <td>
-      <button id={publication._id}
-      className="btn  btn-sm m-3 btn-outline-danger "
-      onClick= {deletePub}
-    >
-      supprimer
-    </button>
+
+      <IconButton id={publication._id}
+     size="small" color="secondary" component="span"
+      onClick= {deletePub}>
+        <DeleteIcon />
+        </IconButton>
       </td>
     </tr>
   );

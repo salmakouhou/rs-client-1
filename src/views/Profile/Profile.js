@@ -16,9 +16,10 @@ import ProfileHeader from "./components/ProfileHeader";
 const Profile = () => {
   const { id } = useParams();
   const [profileUser, setProfileUser] = useState(null);
-  const [author, setAuthor] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [correspondingFollowedUser, setCorrespondingFollowedUser] = useState(
+    null
+  );
+  const [correspondingFollowedUserCitation, setCorrespondingFollowedUserCitation] = useState(
     null
   );
   const { ApiServices, alertService } = useContext(AppContext);
@@ -27,6 +28,7 @@ const Profile = () => {
 
   useEffect(() => {
     getProfile();
+    updateCitation();
   }, [id]);
 
   const getProfile = useCallback(async () => {
@@ -35,16 +37,32 @@ const Profile = () => {
       if (response.data) {
         setProfileUser(response.data);
         setCorrespondingFollowedUser(response.data.correspondingFollowedUser);
+        setCorrespondingFollowedUserCitation(response.data.correspondingFollowedUser);
       } else throw Error();
-      console.log(response.data.correspondingFollowedUser)
+    } catch (error) {
+      pushAlert({ message: "Incapable d'obtenir les données de profil" });
+    }
+  }, [id]);
 
-      const responseScrap = await scraperService.getAuthorData("scopus", response.data.correspondingFollowedUser.authorId);
+
+  const updateCitation = useCallback(async () => {
+    try {
+      const response = await userService.findUser(id);
+      const responseScrap = await scraperService.getAuthorData(response.data.correspondingFollowedUser.platform, response.data.correspondingFollowedUser.authorId);
       if (responseScrap.data.author) {
-        setAuthor(responseScrap.data.author);
-        setLoading(false)
+        console.log(responseScrap.data.author.citationsPerYear.length);
+        console.log(response.data.correspondingFollowedUser.citationsPerYear.length);
+
+        if(responseScrap.data.author.citationsPerYear.length!==response.data.correspondingFollowedUser.citationsPerYear.length){
+          userService.updateCitation(responseScrap.data.author);
+          setCorrespondingFollowedUserCitation(responseScrap.data.author);
+
+        }else if(responseScrap.data.author.citationsPerYear[responseScrap.data.author.citationsPerYear.length-1]!=response.data.correspondingFollowedUser.citationsPerYear[responseScrap.data.author.citationsPerYear.length-1]){
+          userService.updateCitation(responseScrap.data.author);
+          setCorrespondingFollowedUserCitation(responseScrap.data.author);
+        }
+       
       } 
-
-
     } catch (error) {
       pushAlert({ message: "Incapable d'obtenir les données de profil" });
     }
@@ -54,10 +72,10 @@ const Profile = () => {
     <div className="container">
       {profileUser !== null && (
         <Fragment>
-          {correspondingFollowedUser != null && (
+          {correspondingFollowedUser != null && correspondingFollowedUserCitation != null && (
             <div className="row">
               <div className="col-md-8">
-                {correspondingFollowedUser != null && (
+                {correspondingFollowedUser != null && correspondingFollowedUserCitation != null && (
                   <Fragment>
                     <ProfileHeader
                       profile={{
@@ -66,18 +84,17 @@ const Profile = () => {
                       }}
                     />
                     <Publications
-                      getProfile={getProfile}
                       author={correspondingFollowedUser}
                       setAuthor={setCorrespondingFollowedUser}
+                      getProfile={getProfile}
                     />
                   </Fragment>
                 )}
               </div>
-
-              {!loading &&(<div className="col-md-4">
-                <AuthorCitations  author={author} />
+              <div className="col-md-4">
+                <AuthorCitations author={correspondingFollowedUserCitation} />
                 <Coauthors author={correspondingFollowedUser} />
-              </div>)}
+              </div>
             </div>
           )}
         </Fragment>

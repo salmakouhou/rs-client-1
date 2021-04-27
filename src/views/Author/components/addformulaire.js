@@ -25,12 +25,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 
-function AddFormulaire(props) {
+function aire(props) {
   const { show, hideModal, pub, setPub, addpublication, clearInputs } = props;
 
   const add = (event) => {
     event.preventDefault();
     addpublication();
+   
    
   };
 
@@ -151,4 +152,4 @@ function AddFormulaire(props) {
   )
 };
 
-export default AddFormulaire;
+export default aire;

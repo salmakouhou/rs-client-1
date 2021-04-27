@@ -92,6 +92,7 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
             swal("La publication est bien ajoutée", {
               icon: "success",
             });
+            clearInputs();
             hideModal();
             if (response.data) {
               pushAlert({
@@ -107,7 +108,8 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
           }
          
         } else {
-          swal("Abortion du transaction!");
+          swal("l'operation est annulée");
+          
         }
       });
   };
