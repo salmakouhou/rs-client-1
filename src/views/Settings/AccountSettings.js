@@ -11,6 +11,8 @@ function AccountSettings() {
   const { ApiServices, user, setUser, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
   const { userService } = ApiServices;
+  let [loading, setLoading] = useState(false);
+  let [color, setColor] = useState("#1e90ff");
 
   const [passwordUpdate, setPasswordUpdate] = useState({
     courantPassword: "",
@@ -89,6 +91,7 @@ function AccountSettings() {
     const formData = new FormData();
     formData.append("file", profilePicture);
     try {
+      setLoading(true)
       const response = await userService.updateProfilePicture(formData);
       if (response.data) {
         setUser({
@@ -100,6 +103,7 @@ function AccountSettings() {
           message: "La photo de profil a été mis à jour",
         });
         setProfilePicture(null)
+        setLoading(false)
       } else throw Error();
     } catch (e) {
         pushAlert({
@@ -117,6 +121,8 @@ function AccountSettings() {
         setProfilePicture={setProfilePicture}
         profilePicture={profilePicture}
         updateProfilePicture={updateProfilePicture}
+        loading={loading}
+        color={color}
       />
       <PasswordUpdate
         passwordUpdate={passwordUpdate}

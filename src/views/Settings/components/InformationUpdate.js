@@ -2,6 +2,7 @@
 import React, { useEffect, useContext } from "react";
 import { AppContext } from "../../../context/AppContext";
 import UserPicture from "../../components/UserPicture";
+import BounceLoader from "react-spinners/BounceLoader";
 
 function InformationUpdate({
   accountInformations,
@@ -10,9 +11,12 @@ function InformationUpdate({
   profilePicture,
   setProfilePicture,
   updateProfilePicture,
+  loading,
+  color
 }) {
   const { user, UserHelper, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
+  
 
   useEffect(() => {
     setAccountInformations({
@@ -36,7 +40,21 @@ function InformationUpdate({
 
   return (
     <div className="col-md-8">
+      <div style={{
+        position: "fixed",
+        zIndex: "999",
+        height: "2em",
+        width: "4em",
+        overflow: "show",
+        margin: "auto",
+        top: "0",
+        left: "0",
+        bottom: "0",
+        right: "0",
+      }}>
+        <BounceLoader color={color} loading={loading} size={100} />
 
+      </div>
       <div className="card">
         <div className="card-header">
           <h3 className="card-title">Mise à jour du compte</h3>

@@ -59,6 +59,15 @@ const LaboratoryBudget = () => {
     }));
   };
   const updateLaboratoriesData = useCallback(async () => {
+    const connectedUser = JSON.parse(localStorage.getItem("user"));
+
+    try {
+      const test = await userService.getFollowedUsers({ "laboratory_abbreviation": connectedUser.laboratoriesHeaded[0].abbreviation });
+      console.log("==================>")
+      console.log(test.data)
+    }catch(e){
+      console.log(e)
+    }
     let response = await laboratoryService.findAllLaboratories();
     let newlabs = [];
     if (response.data) {
