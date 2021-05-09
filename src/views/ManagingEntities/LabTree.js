@@ -20,16 +20,17 @@ const LabTree = () => {
   const updateNodes = useCallback(async () => {
     let orgChartNodes;
     orgChartNodes = await laboratoryService.getNodesForOrgChart();
-    console.log(orgChartNodes.data);
-     
-      for (let i = 0; i <  orgChartNodes.data.length; i++) {
-        if(orgChartNodes.data[i].img!=undefined && !orgChartNodes.data[i].img.startsWith("http")){
-          orgChartNodes.data[i].img=process.env.REACT_APP_BACKEND_URL+"/pictures/"+orgChartNodes.data[i].img;
-        }
 
-        
+    for (let i = 0; i < orgChartNodes.data.length; i++) {
+      if (orgChartNodes.data[i].img != null && orgChartNodes.data[i].img instanceof Object && orgChartNodes.data[i].img.data !=undefined) {
+        console.log(orgChartNodes.data[i].img)
+        orgChartNodes.data[i].img = `data:${orgChartNodes.data[i].img.mimetype};base64,${btoa( new Uint8Array(orgChartNodes.data[i].img.data.data)
+          .reduce((data, byte) => data + String.fromCharCode(byte), '')
+      )}`;
       }
-    
+    }
+    console.log(orgChartNodes.data)
+
     setNodes(orgChartNodes.data);
     setIsLoading(false);
   }, [laboratoryService]);

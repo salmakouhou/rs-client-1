@@ -1,4 +1,4 @@
-import React, { useEffect,useState,useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Publication from "./Publication";
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
@@ -6,7 +6,7 @@ import AddFormulaire from "./addformulaire";
 import { AppContext } from "../../../context/AppContext";
 import swal from 'sweetalert';
 
-const Publications = ({ author, setAuthor, platform,getProfile }) => {
+const Publications = ({ author, setAuthor, platform, getProfile }) => {
   const { ApiServices, user, setUser, alertService } = useContext(AppContext);
   const { pushAlert } = alertService;
   const { userService } = ApiServices;
@@ -24,7 +24,7 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
   }, []);
 
   const updatePublication = (index, publication) => {
-    const i = author.publications.map(p=>p.title).indexOf(publication.title);
+    const i = author.publications.map(p => p.title).indexOf(publication.title);
     let tempPublications = author.publications;
     tempPublications[i] = publication;
     setAuthor(() => ({
@@ -38,32 +38,32 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
   const showModal = () => {
     setModalShow(true);
   }
-  const hideModal=() =>{
+  const hideModal = () => {
     setModalShow(false);
   }
   const [pub, setPub] = useState({
     auteur: "",
     titre: "",
     annee: "",
-    citation:"",
-    source:"",
-    IF:"",
-    SJR:"",
+    citation: "",
+    source: "",
+    IF: "",
+    SJR: "",
   });
 
   const clearInputs = () => {
     setPub({
       auteur: "",
-    titre: "",
-    annee: "",
-    citation:"",
-    source:"",
-    IF:"",
-    SJR:"",
+      titre: "",
+      annee: "",
+      citation: "",
+      source: "",
+      IF: "",
+      SJR: "",
     });
   };
   const addpublication = () => {
-    
+
     swal({
       title: "Confirmation",
       text: "Etes vous sur de vouloir ajouter cette publication ?",
@@ -72,21 +72,21 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
     })
       .then(async (willAdd) => {
         if (willAdd) {
-          const userP=user._id;
+          const userP = user._id;
 
           try {
-            const response =  userService.addPub({
-              idAuthor:userP, 
-              authors:pub.auteur,
-              title:pub.titre,
-              citation:pub.citation,
-              year:pub.annee,
-              source:pub.source,
-              IF:pub.IF,
-              SJR:pub.SJR
-             
-      
-              
+            const response = userService.addPub({
+              idAuthor: userP,
+              authors: pub.auteur,
+              title: pub.titre,
+              citation: pub.citation,
+              year: pub.annee,
+              source: pub.source,
+              IF: pub.IF,
+              SJR: pub.SJR
+
+
+
             });
             getProfile();
             swal("La publication est bien ajoutée", {
@@ -99,17 +99,17 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
                 type: "success",
                 message: "Le mot de passe a été mis à jour",
               });
-             
+
             } else throw Error();
           } catch (e) {
             pushAlert({
               message: "Incapable de mettre à jour la photo de profil",
             });
           }
-         
+
         } else {
           swal("l'operation est annulée");
-          
+
         }
       });
   };
@@ -119,10 +119,10 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
       <div className="table-responsive">
         <table className="table card-table table-vcenter text-nowrap ">
           <thead>
-          <tr>
+            <tr>
               <th>Titre<IconButton onClick={() => showModal()} aria-label="delete">
-             <AddIcon  />
-                   </IconButton></th>
+                <AddIcon />
+              </IconButton></th>
               <th className="text-center">Année</th>
               <th className="text-center">Citée</th>
               <th className="text-center">IF</th>
@@ -151,9 +151,9 @@ const Publications = ({ author, setAuthor, platform,getProfile }) => {
           </tbody>
         </table>
       </div>
-      <AddFormulaire show={modalShow} hideModal={hideModal}  pub={pub}
-        setPub={setPub} addpublication={addpublication} clearInputs={clearInputs}  
- />
+      <AddFormulaire show={modalShow} hideModal={hideModal} pub={pub}
+        setPub={setPub} addpublication={addpublication} clearInputs={clearInputs}
+      />
     </div>
   );
 };

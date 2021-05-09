@@ -5,7 +5,7 @@ const ArchivageFORM = ({ inputs, setInputs, handleSubmit, inputsSkeleton, cancel
 
   const handleInputsChange = (event) => {
     event.persist();
-    if (event.target.name == "file") {
+    if (event.target.name == "annexe") {
       var keys = Object.keys(event.target.files);
       var files = event.target.files
       keys.forEach((key) => {
@@ -15,7 +15,12 @@ const ArchivageFORM = ({ inputs, setInputs, handleSubmit, inputsSkeleton, cancel
         }));
       })
 
-    } else {
+    } else if(event.target.name=="rapport") {
+      setInputs((inputs) => ({
+        ...inputs,
+        [event.target.name]: event.target.files[0],
+      }));
+    }else {
       setInputs((inputs) => ({
         ...inputs,
         [event.target.name]: event.target.value,
@@ -45,8 +50,8 @@ const ArchivageFORM = ({ inputs, setInputs, handleSubmit, inputsSkeleton, cancel
 
                     <div className="form-group mt-2 ">
                       <label className="form-label">{input.label}</label>
-                      <input type="file" className="" accept=".xlsx, .xls"
-                        onChange={handleInputsChange} multiple name={input.name} required />
+                      <input type="file" className="" 
+                        onChange={handleInputsChange} multiple name={input.name}  required />
                     </div>
                   )}
 
@@ -54,7 +59,7 @@ const ArchivageFORM = ({ inputs, setInputs, handleSubmit, inputsSkeleton, cancel
 
                     <div className="form-group mt-2 ">
                       <label className="form-label">{input.label}</label>
-                      <input type="file" className="" accept=".pdf"
+                      <input type="file" className="" accept=".pdf, .doc, .docx"
                         onChange={handleInputsChange}  name={input.name} required />
                     </div>
                   )}

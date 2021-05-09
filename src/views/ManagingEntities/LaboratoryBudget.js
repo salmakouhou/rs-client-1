@@ -124,11 +124,8 @@ const LaboratoryBudget = () => {
   const updateLaboratory = async (laboratory) => {
     let year = new Date().getFullYear() + 1;
 
-    console.log(year);
-    console.log(inputs.budget);
-    console.log(inputs.year);
+
     let lab = laboratory;
-    console.log(lab);
     if (laboratory.budget === undefined) lab.budget = {};
 
 

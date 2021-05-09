@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import AuthorReport from "../../Author/AuthorReport";
 const ProfileHeader = ({ profile }) => {
-  return ( 
+  return (
     <div className="card">
       <div className="card-body">
         <div className="row mb-3">
@@ -33,23 +33,21 @@ const ProfileHeader = ({ profile }) => {
                   }
                 </PDFDownloadLink>
                 <div className="text-info small">
-                  {`Nous avons réussi à récupérer le SJR et IF de ${
-                    profile.publications.filter((p) => p.IF || p.SJR).length
-                  } / ${profile.publications.length} publications`}
+                  {`Nous avons réussi à récupérer le SJR et IF de ${profile.publications.filter((p) => p.IF || p.SJR).length
+                    } / ${profile.publications.length} publications`}
                 </div>
                 <div className="text-info small">
-                  {`${
-                    profile.publications.filter((p) => p.searchedFor).length
-                  } / ${profile.publications.length}
+                  {`${profile.publications.filter((p) => p.searchedFor).length
+                    } / ${profile.publications.length}
                    publications ont été traitées `}
 
                   {profile.publications.filter((p) => p.searchedFor).length !==
                     profile.publications.length && (
-                    <span
-                      className="loader ml-2 d-inline-block"
-                      style={{ height: "15px", width: "15px" }}
-                    ></span>
-                  )}
+                      <span
+                        className="loader ml-2 d-inline-block"
+                        style={{ height: "15px", width: "15px" }}
+                      ></span>
+                    )}
                 </div>
               </h4>
 
@@ -83,10 +81,25 @@ const ProfileDetails = ({ profile }) => (
 );
 
 const ProfilePicture = ({ profile }) => (
-  <span
-    className="avatar avatar-lg"
-    style={{
-      backgroundImage: "url(" + profile.profilePicture + ")",
-    }}
-  ></span>
+
+  <div className="col-auto">
+    {(profile.profilePicture instanceof Object && profile.profilePicture.data != undefined) ? (<span
+      className={`avatar avatar-lg`}
+      style={{
+        backgroundImage: `url("data:${profile.profilePicture.mimetype};base64,${btoa(new Uint8Array(profile.profilePicture.data.data)
+          .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        )}")`,
+      }}
+    > </span>) 
+    :
+     (
+      <span className={` avatar avatar-lg`}
+        style={{
+          backgroundImage: `url("https://ui-avatars.com/api/?name=${profile.firstName + "+" + profile.lastName}")`,
+        }}
+      >
+      </span>
+    )}
+
+  </div>
 );

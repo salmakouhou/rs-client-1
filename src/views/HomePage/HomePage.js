@@ -28,14 +28,14 @@ const HomePage = () => {
 
     try {
       const respDoc = await phdStudentService.findPhdStudentOfLab();
-      if(respDoc.data){
+      if (respDoc.data) {
         var filtredDoc = new Array();
-        respDoc.data.students.forEach((doc)=>{
-          if(parseInt(doc.end.split('-')[0])>=new Date().getFullYear())
+        respDoc.data.students.forEach((doc) => {
+          if (parseInt(doc.end.split('-')[0]) >= new Date().getFullYear())
             filtredDoc.push(doc)
         })
         setDoctorants(filtredDoc)
-      }else throw Error();
+      } else throw Error();
 
       const response = await userService.getFollowedUsers({ "laboratory_abbreviation": connectedUser.laboratoriesHeaded[0].abbreviation });
       if (response.data) {

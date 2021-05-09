@@ -2,24 +2,24 @@
 import React, { useContext, useEffect, useState, useCallback, Fragment } from "react";
 import PageHeader from "../components/PageHeader";
 import { AppContext } from "../../context/AppContext";
-import { encode, decode } from 'uint8-to-base64';
-import ArchiveTable from "../components/ArchiveTable";
 import ArchiveTree from "../components/ArchiveTree";
+import SyncLoader from "react-spinners/SyncLoader";
 
 const GenralAssembly = () => {
     const { ApiServices } = useContext(AppContext);
     const { pvUploadService, teamService } = ApiServices;
     const [pvs, setPvs] = useState([])
+    let [loading, setLoading] = useState(false);
+    let [color, setColor] = useState("#1e90ff");
 
 
     const updatePvData = useCallback(async () => {
         const teamId = JSON.parse(localStorage.getItem("user")).teamsMemberships[0].team_id;
-
+        setLoading(true)
         try {
             const teamsResponse = await teamService.findTeam(teamId);
             const response = await pvUploadService.findAllPvs(teamsResponse.data.laboratory_id);
-            //const filtredPvs = response.data.filter(pv => pv.laboratory_id === teamsResponse.data.laboratory_id);
-            //console.log(filtredPvs)
+            
             if (response.data) {
                 console.log(response.data)
                 setPvs(
@@ -28,6 +28,7 @@ const GenralAssembly = () => {
                         pv: pv,
                     }))
                 );
+                setLoading(false)
 
             }
             else throw Error();
@@ -40,19 +41,14 @@ const GenralAssembly = () => {
 
     const downloadRapport = async (pv) => {
         try {
-            console.log(pv.split("/")[0])
+            setLoading(true)
             const response = await pvUploadService.findPv(pv.split("/")[0], pv.split("/")[1]);
-
             if (response.data) {
-                const encoded = encode(response.data.data);
-                var byteCharacters = atob(encoded);
-                var byteNumbers = new Array(byteCharacters.length);
-                for (var i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                var byteArray = new Uint8Array(byteNumbers);
-                var file = new Blob([byteArray], { type: response.data.mimetype });
-                var fileURL = URL.createObjectURL(file);
+
+                const base64Response = await fetch(`data:${response.data.mimetype};base64,${btoa(String.fromCharCode.apply(null, new Uint8Array(response.data.data.data)))}`);
+                const blob = await base64Response.blob();
+                var fileURL = URL.createObjectURL(blob);
+                setLoading(false)
                 window.open(fileURL);
             }
 
@@ -71,6 +67,22 @@ const GenralAssembly = () => {
 
     return (
         <Fragment>
+            <div style={{
+                position: "fixed",
+                zIndex: "999",
+                height: "2em",
+                width: "4em",
+                overflow: "show",
+                margin: "auto",
+                top: "0",
+                left: "0",
+                bottom: "0",
+                right: "0",
+            }}>
+                <SyncLoader color={color} loading={loading} size={15} />
+
+            </div>
+
             <div className="page-header">
                 <PageHeader
                     title={`Consultation des PVs `}

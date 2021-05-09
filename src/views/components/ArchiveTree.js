@@ -10,7 +10,6 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import HighlightOffOutlinedIcon from '@material-ui/icons/HighlightOffOutlined';
 import swal from "sweetalert";
 import { AppContext } from "../../context/AppContext";
-import green from '@material-ui/core/colors/green';
 
 
 const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement }) => {
@@ -76,7 +75,8 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement 
                     // If dropped items aren't files, reject them
                     if (ev.dataTransfer.items[i].kind === 'file') {
                         var file = ev.dataTransfer.items[i].getAsFile();
-                        if (file.type == "application/pdf") {
+                        console.log(file.type)
+                        if ((file.type == "application/pdf") || (file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
 
                             checkAvailability(racineDestination).then(function (response) {
                                 if (response.rapport.length == 0) {
@@ -87,7 +87,7 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement 
                             })
 
                         } else {
-                            swal("il ne s'agit pas d'un PDF!", "Vous devez choisir un fichier en format PDF.", "info");
+                            swal("il ne s'agit pas d'un format valide!", "Vous devez choisir un fichier en format PDF ou DOC.", "info");
                             return;
                         }
 
@@ -100,15 +100,7 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement 
                     // If dropped items aren't files, reject them
                     if (ev.dataTransfer.items[i].kind === 'file') {
                         var file = ev.dataTransfer.items[i].getAsFile();
-                        if (file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-                            file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-                            file.type == "application/vnd.ms-excel") {
-                            pushFile(targetCategory, racineDestination, file)
-                        } else {
-                            swal("il ne s'agit pas d'une format valable!", "Vous devez choisir un fichier en format valide.", "info");
-                            return;
-                        }
-
+                        pushFile(targetCategory, racineDestination, file)
                     }
                 }
             }
@@ -153,7 +145,9 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement 
                                         <div className="d-flex">
                                             <div className="mr-auto p-2">{objectRow.name}</div>
                                             <div className="p-2">
-                                                <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
+                                                <IconButton onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} size="small" style={{ color: "#4caf50" }} component="span">
+                                                    <GetAppRoundedIcon />
+                                                </IconButton>
                                             </div>
                                         </div>
                                     } />
@@ -162,10 +156,12 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement 
                             <TreeItem nodeId={"annexes".concat(indexP)} label="Annexes">
                                 {dataObjectRow.annexe.map((objectRow, indexC) => (
 
-                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div class="d-flex">
+                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div className="d-flex">
                                         <div className="mr-auto p-2">{objectRow.name}</div>
                                         <div className="p-2">
-                                            <button onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} className="mr-2 btn-sm btn btn-outline-success">Télécharger</button>
+                                            <IconButton onClick={() => { downloadRapport(dataObjectRow._id.concat("/" + objectRow._id)) }} size="small" style={{ color: "#4caf50" }} component="span">
+                                                <GetAppRoundedIcon />
+                                            </IconButton>
 
                                         </div>
                                     </div>} />
@@ -222,7 +218,7 @@ const ArchiveTree = ({ data, downloadRapport, deletePv, pushFile, removeElement 
                             <TreeItem onDrop={dropHandler} id={dataObjectRow._id.concat("/annexe")} onDragOver={dragOverHandler} nodeId={"annexes".concat(indexP)} label="Annexes">
                                 {dataObjectRow.annexe.map((objectRow, indexC) => (
 
-                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div class="d-flex">
+                                    <TreeItem nodeId={dataObjectRow._id.concat("/" + objectRow._id)} label={<div className="d-flex">
                                         <div className="mr-auto p-2">{objectRow.name}</div>
                                         <div className="p-2">
                                             <IconButton onClick={() => { removeElement("annexe", dataObjectRow._id.concat("/" + objectRow._id)) }} size="small" color="secondary" component="span">

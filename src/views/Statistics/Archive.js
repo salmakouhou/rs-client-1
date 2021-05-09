@@ -6,7 +6,6 @@ import { AppContext } from "../../context/AppContext";
 import swal from 'sweetalert';
 import ArchiveTree from "../components/ArchiveTree";
 import SyncLoader from "react-spinners/SyncLoader";
-import { css } from "@emotion/core";
 
 
 const Archive = () => {
@@ -25,8 +24,8 @@ const Archive = () => {
     const columns = ["Date du PV", "Joindre le rapport", "Joidre les annexes"];
     const inputsSkeleton = [
         { name: "date", label: columns[0], type: "date" },
-        { name: "file", label: columns[1], type: "file" },
-        { name: "file", label: columns[2], type: "file" },
+        { name: "rapport", label: columns[1], type: "file" },
+        { name: "annexe", label: columns[2], type: "file" },
     ];
 
 
@@ -76,6 +75,7 @@ const Archive = () => {
                         const formData = new FormData();
                         var keys = Object.keys(inputs);
                         keys.forEach((key) => {
+                            console.log(inputs[key])
                             formData.append(key, inputs[key])
                         })
 
@@ -136,7 +136,6 @@ const Archive = () => {
         try {
             setLoading(true)
             const response = await pvUploadService.findPv(pv.split("/")[0], pv.split("/")[1]);
-
             if (response.data) {
 
                 const base64Response = await fetch(`data:${response.data.mimetype};base64,${btoa(String.fromCharCode.apply(null, new Uint8Array(response.data.data.data)))}`);
@@ -208,7 +207,7 @@ const Archive = () => {
     const clearInputs = () => {
         setInputs(() => ({
             date: "",
-            pv: "",
+            file: "",
         }));
     };
 

@@ -99,6 +99,7 @@ function AccountSettings() {
           type: "success",
           message: "La photo de profil a été mis à jour",
         });
+        setProfilePicture(null)
       } else throw Error();
     } catch (e) {
         pushAlert({
