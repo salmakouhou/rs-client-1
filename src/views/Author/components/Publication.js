@@ -50,6 +50,8 @@ const Publication = ({
         journalNameQuery,
         publication.year
       );
+      
+      
       if (response.data.error || response.data.status === 404) {
         setNoResultFound(true);
         updatePublication(index, {
@@ -64,6 +66,13 @@ const Publication = ({
           SJR: response.data.journal["SJR"],
           searchedFor: true,
         });
+        const userP=user._id;
+       const responseDB=userService.addSJR({
+          id:userP,
+          title:publication.title,
+          IF: response.data.journal["IF"],
+          SJR: response.data.journal["SJR"],
+        })
       }
     } catch (e) {
       updatePublication(index, {

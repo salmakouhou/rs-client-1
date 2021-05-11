@@ -20,8 +20,13 @@ const makeUserService = (api) => ({
 
   updateCitation:(citation)=>api.post(`/update-citation`,citation),
 
+
+  addSJR:(SJR)=>api.post(`/add-SJR`,SJR),
+  addIF:(IF)=>api.post(`/add-IF`,IF),
+
   createUser: (user) => api.post(`/users`, user),
   updateUser: (user) => api.put(`/users`, user),
+  
   findUser: (_id) => api.get(`/users/${_id}`),
   findAllUsers: () => api.get(`/users`),
   deleteUser: (_id) => api.delete(`/users/${_id}`),
