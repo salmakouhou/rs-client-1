@@ -48,7 +48,6 @@ const Profile = () => {
   const updateCitation = useCallback(async () => {
     try {
       const response = await userService.findUser(id);
-      const responseScrap = await scraperService.getAuthorData(response.data.correspondingFollowedUser.platform, response.data.correspondingFollowedUser.authorId);
       const journalName = response.data.correspondingFollowedUser.publications[6].source
       ? response.data.correspondingFollowedUser.publications[0].source
       : response.data.correspondingFollowedUser.publications[0].extraInformation && response.data.correspondingFollowedUser.publications[0].extraInformation["Journal"]
