@@ -72,8 +72,6 @@ const Profile = () => {
         }else if (response.data.correspondingFollowedUser.publications[i].source=="Mobile Information Systems"){
           console.log("hhhheeeheehhhehehehehloo"+response.data.correspondingFollowedUser.publications[i].IF)
           url="MOB-INF-SYST";
-        }else if(response.data.correspondingFollowedUser.publications[i].source=="Journal of Computer Science"){
-          url="INT-J-FOUND-COMPUT-S"; 
         }else if (response.data.correspondingFollowedUser.publications[i].source=="Intelligent Automation and Soft Computing"){
           url="INTELL-AUTOM-SOFT-CO";
         }else if (response.data.correspondingFollowedUser.publications[i].source=="Surfaces and Interfaces"){
