@@ -116,7 +116,7 @@ const Profile = () => {
         console.log(responseScrap.data.author.citationsPerYear.length);
         console.log(response.data.correspondingFollowedUser.citationsPerYear.length);
 
-        if(responseScrap.data.author.citationsPerYear.length!==response.data.correspondingFollowedUser.citationsPerYear.length){
+        if(responseScrap.data.author.citationsPerYear.length>response.data.correspondingFollowedUser.citationsPerYear.length){
           userService.updateCitation(responseScrap.data.author);
           setCorrespondingFollowedUserCitation(responseScrap.data.author);
 
