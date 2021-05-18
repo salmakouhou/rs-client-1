@@ -13,20 +13,13 @@ const makeScraperService = (api) => ({
 const makeUserService = (api) => ({
   findAllPublications: () => api.get("/publications"),
   findAllReasearchersOfLab: (_id) => api.get(`/users/lab/${_id}`),
-
   addPub:(pub)=>api.post(`/add-pub`,pub),
-
   deletePub:(pub)=>api.post(`/delete-pub`,pub),
-
   updateCitation:(citation)=>api.post(`/update-citation`,citation),
-
-
   addSJR:(SJR)=>api.post(`/add-SJR`,SJR),
   addIF:(IF)=>api.post(`/add-IF`,IF),
-
   createUser: (user) => api.post(`/users`, user),
   updateUser: (user) => api.put(`/users`, user),
-  
   findUser: (_id) => api.get(`/users/${_id}`),
   findAllUsers: () => api.get(`/users`),
   deleteUser: (_id) => api.delete(`/users/${_id}`),
@@ -54,6 +47,10 @@ const makeUserService = (api) => ({
 //   findAllUsers: () => api.get(`/users`),
 //   deleteUser: (_id) => api.delete(`/users/${_id}`),
 // });
+const makeBudgetHistoryService = (api)=>({
+  addBudgetHistory:(budget)=>api.post("/addBudgetHistory",budget),
+  findHistory:(filter)=>api.get(`findHistory/${filter.laboratory_id}`)
+})
 
 const makePvUploadService = (api) => ({
   createPv: (formData) => api.post(`/pv`, formData),
@@ -160,5 +157,6 @@ export {
   makeAuthentificationService,
   makeStatisticsService,
   makeNotificationsService,
-  makePvUploadService
+  makePvUploadService,
+  makeBudgetHistoryService
 };

@@ -20,11 +20,9 @@ const LaboratoryBudget = () => {
   const { laboratoryService, userService } = ApiServices;
 
   const [laboratories, setLaboratories] = useState([{ title: "t" }]);
-
   const [inputs, setInputs] = useState({});
   const [action, setAction] = useState("ADDING");
   const [chartVersion, setChartVersion] = useState(0);
-
   const [chart, setChart] = useState({
     data: {
       unload: true,
@@ -33,14 +31,9 @@ const LaboratoryBudget = () => {
       columns: [],
     },
   });
+
   const columns = ["budget", "année"];
-  const [dateRange, setDateRange] = useState({
-    start: 2015,
-    end: new Date().getFullYear() + 1,
-  });
-
   const title = "Ajouter budget de l'année prochaine";
-
   const inputsSkeleton = [
     { name: "budget", label: columns[0], type: "input" },
     {
@@ -51,46 +44,36 @@ const LaboratoryBudget = () => {
     },
   ];
 
+
   const clearInputs = () => {
     setInputs((inputs) => ({
-
       budget: "",
-
     }));
   };
-  const updateLaboratoriesData = useCallback(async () => {
-    const connectedUser = JSON.parse(localStorage.getItem("user"));
 
-    try {
-      const test = await userService.getFollowedUsers({ "laboratory_abbreviation": connectedUser.laboratoriesHeaded[0].abbreviation });
-      console.log("==================>")
-      console.log(test.data)
-    }catch(e){
-      console.log(e)
-    }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    updateLaboratory(laboratories[0]);
+    updateLaboratoriesData();
+  };
+
+  const cancelEdit = () => {
+    clearInputs();
+    setAction("ADDING");
+  };
+
+  const updateLaboratoriesData = useCallback(async () => {
     let response = await laboratoryService.findAllLaboratories();
     let newlabs = [];
     if (response.data) {
       response.data.map((laboratory) => {
-
         if (laboratory.name === user.laboratoriesHeaded[0].name) {
           newlabs.push(laboratory);
-
           setLaboratories(newlabs);
-          console.log(laboratories);
         }
       })
     }
-    ;
   }, [laboratoryService]);
-
-
-
-
-
-  const updateLaboratoryData = useCallback(() => {
-    setLaboratories(user.laboratoriesHeaded);
-  }, [user.laboratoriesHeaded]);
 
 
   const updateChart = useCallback(() => {
@@ -104,16 +87,10 @@ const LaboratoryBudget = () => {
         }
         i++
       });
-      console.log(laboratoriesafter);
 
       { budget = laboratoriesafter; }
     }
-
-
-    const columns = [["budget"].concat(Object.keys(budget).map((year) => budget[year]['element'] ?? 0)
-
-
-    )]
+    const columns = [["budget"].concat(Object.keys(budget).map((year) => budget[year]['element'] ?? 0))]
       .concat([["x"].concat(Object.keys(budget).map((year) => budget[year]['i'] ?? 0))]);
     setChart(() => ({
       data: {
@@ -129,75 +106,47 @@ const LaboratoryBudget = () => {
 
 
 
-
-  const updateLaboratory = async (laboratory) => {
-    let year = new Date().getFullYear() + 1;
-
-
-    let lab = laboratory;
-    if (laboratory.budget === undefined) lab.budget = {};
-
-
-    lab.budget[inputs.year] = parseInt(inputs.budget);
-
-    try {
-      const response = await laboratoryService.updateLaboratory(
-        lab,
-
-      );
-
-
-      if (response.data) {
-        setAction("ADDING");
-        updateLaboratoriesData();
-        clearInputs();
-      } else throw Error();
-    } catch (error) {
-      pushAlert({
-        message: "Incapable de mettre à jour les données de laboratoire",
-      });
-    }
-  };
+    const updateLaboratory = async (laboratory) => {
+      console.log("======================")
+      console.log(laboratory);
+     
+      let lab = laboratory;
+      if (laboratory.budget === undefined) lab.budget = {};
+  
+  
+      lab.budget[inputs.year] = parseInt(inputs.budget);
+  
+      try {
+        const response = await laboratoryService.updateLaboratory(
+          lab,
+        );
+  
+        if (response.data) {
+          setAction("ADDING");
+          updateLaboratoriesData();
+          clearInputs();
+        } else throw Error();
+      } catch (error) {
+        pushAlert({
+          message: "Incapable de mettre à jour les données de laboratoire",
+        });
+      }
+    };
 
 
   useEffect(() => {
     if (laboratories.length !== 0) {
-
-      clearInputs();
+      //clearInputs();
       updateChart();
     }
   }, [updateLaboratoriesData, updateChart]);
 
-  useEffect(() => {
-    updateChart();
-  }, [laboratories]);
 
   useEffect(() => {
-
-
     updateLaboratoriesData();
-
   }, []);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
 
-    console.log(
-
-      laboratories[0],
-
-    );
-
-    updateLaboratory(laboratories[0]);
-
-    updateLaboratoriesData();
-
-  };
-
-  const cancelEdit = () => {
-    clearInputs();
-    setAction("ADDING");
-  };
 
   return (
     <Fragment>

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AppContext } from "../../../context/AppContext";
 import BudgetDetails from "../../components/BudgetDetails";
 import NoResultFound from "../../components/NoResultFound";
 
@@ -9,12 +10,46 @@ const BudgetTable = ({ labBudget }) => {
   const [cats, setCats] = useState([]);
   const [sum, setSum] = useState(0);
   const [result, setResult] = useState(true);
+  const { ApiServices, user } = useContext(AppContext);
+  const { budgetHistoryService } = ApiServices;
 
-  const showModal = (labData) => {
+  const showModal = async (labData) => {
+    console.log(labData)
+    try {
+      const response = await budgetHistoryService.findHistory({ laboratory_id: user.laboratoriesHeaded[0]._id });
+      setBudgetData(labData)
+      var categories = [];
+      var tot= 0;
+      response.data[0].budget.forEach((budget) => {
+        if (budget.year != undefined && budget.year == labData.year) {
+          setBudgetData(budget)
+          budget.categories.forEach((cat) => {
+            categories.push(createOption(Object.keys(cat)[0], cat[Object.keys(cat)[0]]))
+            setInputs((inputs) => ({
+              ...inputs,
+              [Object.keys(cat)[0]]: cat[Object.keys(cat)[0]],
+            }));
+            tot=parseInt(tot)+parseInt(cat[Object.keys(cat)[0]]);
+          })
+          setSum(tot)
+        } else {
+          setBudgetData(labData)
+        }
+      })
     
-    setModalShow(true);
-    setBudgetData(labData)
+      setCats(categories)
+      setModalShow(true);
+    } catch (error) {
+      console.log(error)
+    }
+
   }
+
+  const createOption = (label, sum) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ''),
+    sum: sum
+  });
 
   const hideModal = () => {
     clearInputs();
@@ -29,10 +64,13 @@ const BudgetTable = ({ labBudget }) => {
     setResult(true)
   }
 
-  
 
-  const verifyBudget = () => {
-    return Object.values(inputs).reduce((a, b) => { return a + b }, 0);
+  const addBudgetHistory = async () => {
+    var laboratory_id = user.laboratoriesHeaded[0]._id;
+    const response = await budgetHistoryService.addBudgetHistory({
+      laboratory_id: laboratory_id, categories: cats.map((e) => { return { [e.label]: inputs[e.label] } })
+      , budgetData: budgetData
+    })
   }
 
 
@@ -53,7 +91,10 @@ const BudgetTable = ({ labBudget }) => {
                 return (<tr key={index}>
                   <td> {year}</td>
                   <td className="" key={index}>{labBudget[year] ?? 0}DH</td>
-                  <td> <button type="button" className="btn btn-primary " onClick={() => showModal({ "budget": labBudget[year], "year": year })}>détail</button> </td>
+                              
+                  <td>
+                    
+                     <button type="button" className="btn btn-primary " onClick={() => showModal({ "budget": labBudget[year], "year": year })}>détail</button> </td>
                 </tr>
                 )
               }
@@ -67,14 +108,15 @@ const BudgetTable = ({ labBudget }) => {
           labBudget={budgetData}
           setInputs={setInputs}
           inputs={inputs}
-          verifyBudget={verifyBudget}
           clearInputs={clearInputs}
           cats={cats}
           setCats={setCats}
-          setSum={setSum}
-          sum={sum}
           result={result}
           setResult={setResult}
+          addBudgetHistory={addBudgetHistory}
+          inputs={inputs}
+          sum={sum}
+          setSum={setSum}
         />
       </div>
     );

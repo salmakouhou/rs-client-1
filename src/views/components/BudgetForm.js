@@ -26,7 +26,6 @@ const BudgetForm = ({
   };
   const handleInputsChange = (event) => {
     event.persist();
-
     setInputs((inputs) => ({
       ...inputs,
       [event.target.name]: event.target.value,
@@ -35,7 +34,6 @@ const BudgetForm = ({
 
   useEffect(() => {
     inputsSkeleton.forEach((input) => {
-      console.log("undef", inputs[input.name]);
       if (
         input.type === "select" &&
         input.options.length &&
