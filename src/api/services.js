@@ -63,6 +63,17 @@ const makePvUploadService = (api) => ({
 })
 
 
+const makeGalerieUploadService = (api) => ({
+  createGalerie: (formData) => api.post(`/galerie`, formData),
+  findAllGaleries: (_id) => api.get(`/galerie/${_id}`),
+  findGalerie: (_id,_doc) => api.get(`/galerie/doc/${_id}/${_doc}`),
+  deleteGalerie: (_id) => api.delete(`/galerie/${_id}`),
+  removeElement: (type,racine,element)=>api.post("/galerie/removeElement",{type,racine,element}),
+  findGalerieById :(_id)=>api.get(`/galerie/findOne/${_id}`),
+  pushFile :(form)=>api.post("/galerie/pushFile",form)
+})
+
+
 const makeUniversityService = (api) => ({
   createUniversity: (university) => api.post(`/universities`, university),
   updateUniversity: (university) => api.put(`/universities`, university),
@@ -158,5 +169,6 @@ export {
   makeStatisticsService,
   makeNotificationsService,
   makePvUploadService,
+  makeGalerieUploadService,
   makeBudgetHistoryService
 };
